@@ -1,8 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+// @flow
 
-import * as routes from '../../constants/routes';
-import SignOutButton from '../SignOut';
+import React from "react"
+import { Link } from "react-router-dom"
+
+import * as routes from "../../constants/routes"
+import SignOutButton from "../SignOut"
 
 const Navigation = ({ session }) => (
   <div>
@@ -12,7 +14,7 @@ const Navigation = ({ session }) => (
       <NavigationNonAuth />
     )}
   </div>
-);
+)
 
 const NavigationAuth = ({ session }) => (
   <ul>
@@ -24,16 +26,16 @@ const NavigationAuth = ({ session }) => (
     </li>
     {session &&
       session.me &&
-      session.me.role === 'ADMIN' && (
-        <li>
-          <Link to={routes.ADMIN}>Admin</Link>
-        </li>
-      )}
+      session.me.role === "ADMIN" && (
+      <li>
+        <Link to={routes.ADMIN}>Admin</Link>
+      </li>
+    )}
     <li>
       <SignOutButton />
     </li>
   </ul>
-);
+)
 
 const NavigationNonAuth = () => (
   <ul>
@@ -44,6 +46,6 @@ const NavigationNonAuth = () => (
       <Link to={routes.LANDING}>Landing</Link>
     </li>
   </ul>
-);
+)
 
-export default Navigation;
+export default Navigation

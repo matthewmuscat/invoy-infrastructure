@@ -7,7 +7,7 @@
     "node": "10.11.0"
   },
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
+    "dev": "nodemon --exec babel-node src/index.jsx",
     "test:run-server": "TEST_DATABASE=invoy npm start",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "test": "echo \"No test specified\" && exit 0"

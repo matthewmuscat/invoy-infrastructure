@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+// @flow
+import React, { Component } from "react"
+import { Mutation } from "react-apollo"
+import gql from "graphql-tag"
 
-import ErrorMessage from '../../Error';
+import ErrorMessage from "../../Error"
 
 const CREATE_MESSAGE = gql`
   mutation($text: String!) {
@@ -16,29 +17,27 @@ const CREATE_MESSAGE = gql`
       }
     }
   }
-`;
+`
 
 class MessageCreate extends Component {
-  state = {
-    text: '',
-  };
+  state = { text: "" };
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  onChange = (event) => {
+    const { name, value } = event.target
+    this.setState({ [name]: value })
   };
 
   onSubmit = async (event, createMessage) => {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
-      await createMessage();
-      this.setState({ text: '' });
+      await createMessage()
+      this.setState({ text: "" })
     } catch (error) {}
   };
 
   render() {
-    const { text } = this.state;
+    const { text } = this.state
 
     return (
       <Mutation
@@ -70,10 +69,10 @@ class MessageCreate extends Component {
           >
             <textarea
               name="text"
-              value={text}
               onChange={this.onChange}
-              type="text"
               placeholder="Your message ..."
+              type="text"
+              value={text}
             />
             <button type="submit">Send</button>
 
@@ -81,8 +80,8 @@ class MessageCreate extends Component {
           </form>
         )}
       </Mutation>
-    );
+    )
   }
 }
 
-export default MessageCreate;
+export default MessageCreate

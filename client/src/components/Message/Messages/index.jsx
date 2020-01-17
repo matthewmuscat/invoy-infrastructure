@@ -1,10 +1,11 @@
-import React, { Component, Fragment } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+// @flow
+import React, { Component, Fragment } from "react"
+import { Query } from "react-apollo"
+import gql from "graphql-tag"
 
-import MessageDelete from '../MessageDelete';
-import Loading from '../../Loading';
-import withSession from '../../Session/withSession';
+import MessageDelete from "../MessageDelete"
+import Loading from "../../Loading"
+import withSession from "../../Session/withSession"
 
 const MESSAGE_CREATED = gql`
   subscription {
@@ -20,7 +21,7 @@ const MESSAGE_CREATED = gql`
       }
     }
   }
-`;
+`
 
 const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
   query($cursor: String, $limit: Int!) {
@@ -41,7 +42,7 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
       }
     }
   }
-`;
+`
 
 const Messages = ({ limit }) => (
   <Query
@@ -55,16 +56,16 @@ const Messages = ({ limit }) => (
             There are no messages yet ... Try to create one by
             yourself.
           </div>
-        );
+        )
       }
 
-      const { messages } = data;
+      const { messages } = data
 
       if (loading || !messages) {
-        return <Loading />;
+        return <Loading />
       }
 
-      const { edges, pageInfo } = messages;
+      const { edges, pageInfo } = messages
 
       return (
         <Fragment>
@@ -75,18 +76,18 @@ const Messages = ({ limit }) => (
 
           {pageInfo.hasNextPage && (
             <MoreMessagesButton
+              fetchMore={fetchMore}
               limit={limit}
               pageInfo={pageInfo}
-              fetchMore={fetchMore}
             >
               More
             </MoreMessagesButton>
           )}
         </Fragment>
-      );
+      )
     }}
   </Query>
-);
+)
 
 const MoreMessagesButton = ({
   limit,
@@ -95,7 +96,6 @@ const MoreMessagesButton = ({
   children,
 }) => (
   <button
-    type="button"
     onClick={() =>
       fetchMore({
         variables: {
@@ -104,7 +104,7 @@ const MoreMessagesButton = ({
         },
         updateQuery: (previousResult, { fetchMoreResult }) => {
           if (!fetchMoreResult) {
-            return previousResult;
+            return previousResult
           }
 
           return {
@@ -115,14 +115,15 @@ const MoreMessagesButton = ({
                 ...fetchMoreResult.messages.edges,
               ],
             },
-          };
+          }
         },
       })
     }
+    type="button"
   >
     {children}
   </button>
-);
+)
 
 class MessageList extends Component {
   subscribeToMoreMessage = () => {
@@ -130,10 +131,10 @@ class MessageList extends Component {
       document: MESSAGE_CREATED,
       updateQuery: (previousResult, { subscriptionData }) => {
         if (!subscriptionData.data) {
-          return previousResult;
+          return previousResult
         }
 
-        const { messageCreated } = subscriptionData.data;
+        const { messageCreated } = subscriptionData.data
 
         return {
           ...previousResult,
@@ -144,21 +145,21 @@ class MessageList extends Component {
               ...previousResult.messages.edges,
             ],
           },
-        };
+        }
       },
-    });
+    })
   };
 
   componentDidMount() {
-    this.subscribeToMoreMessage();
+    this.subscribeToMoreMessage()
   }
 
   render() {
-    const { messages } = this.props;
+    const { messages } = this.props
 
     return messages.map(message => (
       <MessageItem key={message.id} message={message} />
-    ));
+    ))
   }
 }
 
@@ -171,11 +172,11 @@ const MessageItemBase = ({ message, session }) => (
     {session &&
       session.me &&
       message.user.id === session.me.id && (
-        <MessageDelete message={message} />
-      )}
+      <MessageDelete message={message} />
+    )}
   </div>
-);
+)
 
-const MessageItem = withSession(MessageItemBase);
+const MessageItem = withSession(MessageItemBase)
 
-export default Messages;
+export default Messages

@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/graphql/.*
+.*/node_modules/graphql-tag/.*
+
+
+[include]
+src/**/*.jsx
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]

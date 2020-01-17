@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+// @flow
 
-import { SignUpLink } from '../SignUp';
-import * as routes from '../../constants/routes';
-import ErrorMessage from '../Error';
+import React, { Component } from "react"
+import { withRouter } from "react-router-dom"
+import { Mutation } from "react-apollo"
+import gql from "graphql-tag"
+
+import { SignUpLink } from "../SignUp"
+import * as routes from "../../constants/routes"
+import ErrorMessage from "../Error"
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -13,7 +15,7 @@ const SIGN_IN = gql`
       token
     }
   }
-`;
+`
 
 const SignInPage = ({ history, refetch }) => (
   <div>
@@ -21,39 +23,39 @@ const SignInPage = ({ history, refetch }) => (
     <SignInForm history={history} refetch={refetch} />
     <SignUpLink />
   </div>
-);
+)
 
 const INITIAL_STATE = {
-  login: '',
-  password: '',
-};
+  login: "",
+  password: "",
+}
 
 class SignInForm extends Component {
   state = { ...INITIAL_STATE };
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  onChange = (event) => {
+    const { name, value } = event.target
+    this.setState({ [name]: value })
   };
 
   onSubmit = (event, signIn) => {
     signIn().then(async ({ data }) => {
-      this.setState({ ...INITIAL_STATE });
+      this.setState({ ...INITIAL_STATE })
 
-      localStorage.setItem('token', data.signIn.token);
+      localStorage.setItem("token", data.signIn.token)
 
-      await this.props.refetch();
+      await this.props.refetch()
 
-      this.props.history.push(routes.LANDING);
-    });
+      this.props.history.push(routes.LANDING)
+    })
 
-    event.preventDefault();
+    event.preventDefault()
   };
 
   render() {
-    const { login, password } = this.state;
+    const { login, password } = this.state
 
-    const isInvalid = password === '' || login === '';
+    const isInvalid = password === "" || login === ""
 
     return (
       <Mutation mutation={SIGN_IN} variables={{ login, password }}>
@@ -61,17 +63,17 @@ class SignInForm extends Component {
           <form onSubmit={event => this.onSubmit(event, signIn)}>
             <input
               name="login"
-              value={login}
               onChange={this.onChange}
-              type="text"
               placeholder="Email or Username"
+              type="text"
+              value={login}
             />
             <input
               name="password"
-              value={password}
               onChange={this.onChange}
-              type="password"
               placeholder="Password"
+              type="password"
+              value={password}
             />
             <button disabled={isInvalid || loading} type="submit">
               Sign In
@@ -81,10 +83,10 @@ class SignInForm extends Component {
           </form>
         )}
       </Mutation>
-    );
+    )
   }
 }
 
-export default withRouter(SignInPage);
+export default withRouter(SignInPage)
 
-export { SignInForm };
+export { SignInForm }
