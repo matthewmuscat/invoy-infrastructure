@@ -126,6 +126,9 @@ const MoreMessagesButton = ({
 )
 
 class MessageList extends Component {
+  componentDidMount() {
+    this.subscribeToMoreMessage()
+  }
   subscribeToMoreMessage = () => {
     this.props.subscribeToMore({
       document: MESSAGE_CREATED,
@@ -150,10 +153,6 @@ class MessageList extends Component {
     })
   };
 
-  componentDidMount() {
-    this.subscribeToMoreMessage()
-  }
-
   render() {
     const { messages } = this.props
 
@@ -169,9 +168,7 @@ const MessageItemBase = ({ message, session }) => (
     <small>{message.createdAt}</small>
     <p>{message.text}</p>
 
-    {session &&
-      session.me &&
-      message.user.id === session.me.id && (
+    {session && session.me && message.user.id === session.me.id && (
       <MessageDelete message={message} />
     )}
   </div>
