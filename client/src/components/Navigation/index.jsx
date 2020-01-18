@@ -20,7 +20,7 @@ const Navigation = ({ session }) => (
 const NavigationAuth = ({ session }) => (
   <ul>
     <li>
-      <Link to={routes.LANDING}>Landing</Link>
+      <Link to={routes.DASHBOARD}>Dashboard</Link>
     </li>
     <li>
       <Link to={routes.ACCOUNT}>Account ({_.concat(session.me.first_name, " ", session.me.last_name)})</Link>
@@ -41,10 +41,10 @@ const NavigationAuth = ({ session }) => (
 const NavigationNonAuth = () => (
   <ul>
     <li>
-      <Link to={routes.SIGN_IN}>Sign In</Link>
+      <Link to={routes.SIGN_IN}>Log In</Link>
     </li>
     <li>
-      <Link to={routes.LANDING}>Landing</Link>
+      <Link to={routes.DASHBOARD}>Dashboard</Link>
     </li>
   </ul>
 )

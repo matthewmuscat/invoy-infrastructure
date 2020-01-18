@@ -1,23 +1,9 @@
 // @flow
 import React, { Component } from "react"
 import { Mutation } from "react-apollo"
-import gql from "graphql-tag"
+import { CREATE_MESSAGE_MUTATION } from "../../../graphql/mutations"
 
-import ErrorMessage from "../../Error"
-
-const CREATE_MESSAGE = gql`
-  mutation($text: String!) {
-    createMessage(text: $text) {
-      id
-      text
-      createdAt
-      user {
-        id
-        email
-      }
-    }
-  }
-`
+import ErrorMessage from "../../Error/index.jsx"
 
 class MessageCreate extends Component {
   state = { text: "" };
@@ -41,7 +27,7 @@ class MessageCreate extends Component {
 
     return (
       <Mutation
-        mutation={CREATE_MESSAGE}
+        mutation={CREATE_MESSAGE_MUTATION}
         variables={{ text }}
         // Not used anymore because of Subscription
 

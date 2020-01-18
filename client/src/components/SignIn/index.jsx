@@ -3,23 +3,14 @@
 import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 import { Mutation } from "react-apollo"
-import gql from "graphql-tag"
-
+import { SIGN_IN_MUTATION } from "../../graphql/mutations"
 import { SignUpLink } from "../SignUp"
 import * as routes from "../../constants/routes"
 import ErrorMessage from "../Error"
 
-const SIGN_IN = gql`
-  mutation($email: String!, $password: String!) {
-    signIn(email: $email, password: $password) {
-      token
-    }
-  }
-`
-
 const SignInPage = ({ history, refetch }) => (
   <div>
-    <h1>SignIn</h1>
+    <h1>Log In</h1>
     <SignInForm history={history} refetch={refetch} />
     <SignUpLink />
   </div>
@@ -46,7 +37,7 @@ class SignInForm extends Component {
 
       await this.props.refetch()
 
-      this.props.history.push(routes.LANDING)
+      this.props.history.push(routes.DASHBOARD)
     })
 
     event.preventDefault()
@@ -58,7 +49,7 @@ class SignInForm extends Component {
     const isInvalid = password === "" || email === ""
 
     return (
-      <Mutation mutation={SIGN_IN} variables={{ email, password }}>
+      <Mutation mutation={SIGN_IN_MUTATION} variables={{ email, password }}>
         {(signIn, { data, loading, error }) => (
           <form onSubmit={event => this.onSubmit(event, signIn)}>
             <input
@@ -76,7 +67,7 @@ class SignInForm extends Component {
               value={password}
             />
             <button disabled={isInvalid || loading} type="submit">
-              Sign In
+              Log In
             </button>
 
             {error && <ErrorMessage error={error} />}

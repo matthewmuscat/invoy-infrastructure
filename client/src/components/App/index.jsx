@@ -4,7 +4,7 @@ import React from "react"
 import { Router, Route } from "react-router-dom"
 
 import Navigation from "../Navigation"
-import LandingPage from "../Landing"
+import Dashboard from "../Dashboard"
 import SignUpPage from "../SignUp"
 import SignInPage from "../SignIn"
 import AccountPage from "../Account"
@@ -22,9 +22,9 @@ const App = ({ session, refetch }) => (
       <hr />
 
       <Route
-        component={() => <LandingPage />}
+        component={() => <Dashboard />}
         exact
-        path={routes.LANDING}
+        path={routes.DASHBOARD}
       />
       <Route
         component={() => <SignUpPage refetch={refetch} />}

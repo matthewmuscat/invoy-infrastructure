@@ -2,41 +2,29 @@
 
 import React from "react"
 import { Mutation } from "react-apollo"
-import gql from "graphql-tag"
+import { DELETE_MESSAGE_MUTATION } from "../../../graphql/mutations"
+import { GET_ALL_MESSAGES_WITH_USERS_QUERY } from "../../../graphql/queries"
 
-const GET_ALL_MESSAGES_WITH_USERS = gql`
-  query {
-    messages(order: "DESC") @connection(key: "MessagesConnection") {
-      edges {
-        id
-        text
-        createdAt
-        user {
-          id
-          email
-        }
-      }
-      pageInfo {
-        hasNextPage
-      }
-    }
-  }
-`
+type Message = {|
+  createdAt: string,
+  id: string,
+  text: string,
+  user: {
+    email: string,
+    first_name: string,
+    id: string,
+    last_name: string,
+  },
+|}
 
-const DELETE_MESSAGE = gql`
-  mutation($id: ID!) {
-    deleteMessage(id: $id)
-  }
-`
-
-const MessageDelete = ({ message }) => (
+const MessageDelete = ({ message }: Message) => (
   <Mutation
-    mutation={DELETE_MESSAGE}
+    mutation={DELETE_MESSAGE_MUTATION}
     update={(cache) => {
-      const data = cache.readQuery({ query: GET_ALL_MESSAGES_WITH_USERS })
-
+      const data = cache.readQuery({ query: GET_ALL_MESSAGES_WITH_USERS_QUERY })
+      console.log("Message", message)
       cache.writeQuery({
-        query: GET_ALL_MESSAGES_WITH_USERS,
+        query: GET_ALL_MESSAGES_WITH_USERS_QUERY,
         data: {
           ...data,
           messages: {

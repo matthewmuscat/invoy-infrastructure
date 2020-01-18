@@ -3,18 +3,11 @@
 import React, { Component } from "react"
 import { Link, withRouter } from "react-router-dom"
 import { Mutation } from "react-apollo"
-import gql from "graphql-tag"
+import { SIGN_UP_MUTATION } from "../../graphql/mutations"
 
 import * as routes from "../../constants/routes"
-import ErrorMessage from "../Error/"
-
-const SIGN_UP = gql`
-  mutation($email: String!, $first_name: String!, $last_name: String!, $phone_number: String!, $password: String!) {
-    signUp(email: $email, first_name: $first_name, last_name: $last_name, phone_number: $phone_number, password: $password) {
-      token
-    }
-  }
-`
+import ErrorMessage from "../Error/index.jsx"
+import styles from "./styles.module.scss"
 
 const INITIAL_STATE = {
   first_name: "",
@@ -27,7 +20,7 @@ const INITIAL_STATE = {
 
 const SignUpPage = ({ history, refetch }) => (
   <div>
-    <h1>SignUp</h1>
+    <h1>Register</h1>
     <SignUpForm history={history} refetch={refetch} />
   </div>
 )
@@ -46,7 +39,7 @@ class SignUpForm extends Component {
 
       await this.props.refetch()
 
-      this.props.history.push(routes.LANDING)
+      this.props.history.push(routes.DASHBOARD)
     })
 
     event.preventDefault()
@@ -72,11 +65,12 @@ class SignUpForm extends Component {
 
     return (
       <Mutation
-        mutation={SIGN_UP}
+        mutation={SIGN_UP_MUTATION}
         variables={{ first_name, last_name, phone_number, email, password }}
       >
         {(signUp, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, signUp)}>
+          <form className={styles.formSection} onSubmit={event => this.onSubmit(event, signUp)}>
+            <h4>Personal Details</h4>
             <input
               name="first_name"
               onChange={this.onChange}
@@ -120,7 +114,7 @@ class SignUpForm extends Component {
               value={passwordConfirmation}
             />
             <button disabled={isInvalid || loading} type="submit">
-              Sign Up
+              Register
             </button>
 
             {error && <ErrorMessage error={error} />}
@@ -133,7 +127,7 @@ class SignUpForm extends Component {
 
 const SignUpLink = () => (
   <p>
-    Don't have an account? <Link to={routes.SIGN_UP}>Sign Up</Link>
+    Don't have an account? <Link to={routes.SIGN_UP}>Register</Link>
   </p>
 )
 
