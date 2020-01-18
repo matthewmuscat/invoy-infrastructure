@@ -5,8 +5,8 @@ import { AuthenticationError, UserInputError } from 'apollo-server';
 import { isAdmin, isAuthenticated } from './authorization';
 
 const createToken = async (user, secret, expiresIn) => {
-  const { id, email, username, role } = user;
-  return await jwt.sign({ id, email, username, role }, secret, {
+  const { id, email, role } = user;
+  return await jwt.sign({ id, email, role }, secret, {
     expiresIn,
   });
 };
@@ -31,11 +31,13 @@ export default {
   Mutation: {
     signUp: async (
       parent,
-      { username, email, password },
+      { first_name, last_name, phone_number, email, password },
       { models, secret },
     ) => {
       const user = await models.User.create({
-        username,
+        first_name,
+        last_name,
+        phone_number,
         email,
         password,
       });
@@ -45,10 +47,10 @@ export default {
 
     signIn: async (
       parent,
-      { login, password },
+      { email, password },
       { models, secret },
     ) => {
-      const user = await models.User.findByLogin(login);
+      const user = await models.User.findByLogin(email);
 
       if (!user) {
         throw new UserInputError(
@@ -67,9 +69,9 @@ export default {
 
     updateUser: combineResolvers(
       isAuthenticated,
-      async (parent, { username }, { models, me }) => {
+      async (parent, { email }, { models, me }) => {
         const user = await models.User.findByPk(me.id);
-        return await user.update({ username });
+        return await user.update({ email });
       },
     ),
 

@@ -13,7 +13,7 @@ const CREATE_MESSAGE = gql`
       createdAt
       user {
         id
-        username
+        email
       }
     }
   }

@@ -13,7 +13,7 @@ const GET_ALL_MESSAGES_WITH_USERS = gql`
         createdAt
         user {
           id
-          username
+          email
         }
       }
       pageInfo {

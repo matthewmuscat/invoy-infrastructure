@@ -16,7 +16,7 @@ const MESSAGE_CREATED = gql`
         createdAt
         user {
           id
-          username
+          email
         }
       }
     }
@@ -33,7 +33,7 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
         createdAt
         user {
           id
-          username
+          email
         }
       }
       pageInfo {
@@ -164,7 +164,7 @@ class MessageList extends Component {
 
 const MessageItemBase = ({ message, session }) => (
   <div>
-    <h3>{message.user.username}</h3>
+    <h3>{message.user.email}</h3>
     <small>{message.createdAt}</small>
     <p>{message.text}</p>
 

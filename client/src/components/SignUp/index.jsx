@@ -9,15 +9,17 @@ import * as routes from "../../constants/routes"
 import ErrorMessage from "../Error/"
 
 const SIGN_UP = gql`
-  mutation($username: String!, $email: String!, $password: String!) {
-    signUp(username: $username, email: $email, password: $password) {
+  mutation($email: String!, $first_name: String!, $last_name: String!, $phone_number: String!, $password: String!) {
+    signUp(email: $email, first_name: $first_name, last_name: $last_name, phone_number: $phone_number, password: $password) {
       token
     }
   }
 `
 
 const INITIAL_STATE = {
-  username: "",
+  first_name: "",
+  last_name: "",
+  phone_number: "",
   email: "",
   password: "",
   passwordConfirmation: "",
@@ -40,8 +42,6 @@ class SignUpForm extends Component {
 
   onSubmit = (event, signUp) => {
     signUp().then(async ({ data }) => {
-      this.setState({ ...INITIAL_STATE })
-
       localStorage.setItem("token", data.signUp.token)
 
       await this.props.refetch()
@@ -54,7 +54,9 @@ class SignUpForm extends Component {
 
   render() {
     const {
-      username,
+      first_name,
+      last_name,
+      phone_number,
       email,
       password,
       passwordConfirmation,
@@ -64,26 +66,42 @@ class SignUpForm extends Component {
       password !== passwordConfirmation ||
       password === "" ||
       email === "" ||
-      username === ""
+      first_name === "" ||
+      last_name === "" ||
+      phone_number === ""
 
     return (
       <Mutation
         mutation={SIGN_UP}
-        variables={{ username, email, password }}
+        variables={{ first_name, last_name, phone_number, email, password }}
       >
         {(signUp, { data, loading, error }) => (
           <form onSubmit={event => this.onSubmit(event, signUp)}>
             <input
-              name="username"
+              name="first_name"
               onChange={this.onChange}
-              placeholder="Full Name"
+              placeholder="First Name"
               type="text"
-              value={username}
+              value={first_name}
+            />
+            <input
+              name="last_name"
+              onChange={this.onChange}
+              placeholder="Last Name"
+              type="text"
+              value={last_name}
+            />
+            <input
+              name="phone_number"
+              onChange={this.onChange}
+              placeholder="Phone Number"
+              type="text"
+              value={phone_number}
             />
             <input
               name="email"
               onChange={this.onChange}
-              placeholder="Email Address"
+              placeholder="Email"
               type="text"
               value={email}
             />

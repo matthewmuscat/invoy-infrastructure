@@ -89,8 +89,9 @@ server.installSubscriptionHandlers(httpServer);
 const isTest = !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
+const flag = true
 
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
+sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {
   if (isTest || isProduction) {
     createUsersWithMessages(new Date());
   }
@@ -103,7 +104,6 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
 const createUsersWithMessages = async date => {
   await models.User.create(
     {
-      username: 'rwieruch',
       email: 'hello@robin.com',
       password: 'rwieruch',
       role: 'ADMIN',
@@ -121,7 +121,6 @@ const createUsersWithMessages = async date => {
 
   await models.User.create(
     {
-      username: 'ddavids',
       email: 'hello@david.com',
       password: 'ddavids',
       messages: [
