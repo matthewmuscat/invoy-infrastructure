@@ -2,6 +2,7 @@
 import React, { Component, Fragment } from "react"
 import { Query } from "react-apollo"
 import gql from "graphql-tag"
+import _ from "lodash"
 
 import MessageDelete from "../MessageDelete"
 import Loading from "../../Loading"
@@ -16,6 +17,8 @@ const MESSAGE_CREATED = gql`
         createdAt
         user {
           id
+          first_name
+          last_name
           email
         }
       }
@@ -33,6 +36,8 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
         createdAt
         user {
           id
+          first_name
+          last_name
           email
         }
       }
@@ -164,7 +169,7 @@ class MessageList extends Component {
 
 const MessageItemBase = ({ message, session }) => (
   <div>
-    <h3>{message.user.email}</h3>
+    <h3>{_.concat(message.user.first_name, " ", message.user.last_name)}</h3>
     <small>{message.createdAt}</small>
     <p>{message.text}</p>
 

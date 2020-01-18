@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Link } from "react-router-dom"
+import _ from "lodash"
 
 import * as routes from "../../constants/routes"
 import SignOutButton from "../SignOut"
@@ -22,7 +23,7 @@ const NavigationAuth = ({ session }) => (
       <Link to={routes.LANDING}>Landing</Link>
     </li>
     <li>
-      <Link to={routes.ACCOUNT}>Account ({session.me.email})</Link>
+      <Link to={routes.ACCOUNT}>Account ({_.concat(session.me.first_name, " ", session.me.last_name)})</Link>
     </li>
     {session &&
       session.me &&
