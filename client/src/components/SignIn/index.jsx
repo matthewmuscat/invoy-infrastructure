@@ -10,8 +10,8 @@ import * as routes from "../../constants/routes"
 import ErrorMessage from "../Error"
 
 const SIGN_IN = gql`
-  mutation($login: String!, $password: String!) {
-    signIn(login: $login, password: $password) {
+  mutation($email: String!, $password: String!) {
+    signIn(email: $email, password: $password) {
       token
     }
   }
@@ -26,7 +26,7 @@ const SignInPage = ({ history, refetch }) => (
 )
 
 const INITIAL_STATE = {
-  login: "",
+  email: "",
   password: "",
 }
 
@@ -53,20 +53,20 @@ class SignInForm extends Component {
   };
 
   render() {
-    const { login, password } = this.state
+    const { email, password } = this.state
 
-    const isInvalid = password === "" || login === ""
+    const isInvalid = password === "" || email === ""
 
     return (
-      <Mutation mutation={SIGN_IN} variables={{ login, password }}>
+      <Mutation mutation={SIGN_IN} variables={{ email, password }}>
         {(signIn, { data, loading, error }) => (
           <form onSubmit={event => this.onSubmit(event, signIn)}>
             <input
-              name="login"
+              name="email"
               onChange={this.onChange}
-              placeholder="Email or Username"
+              placeholder="Email or email"
               type="text"
-              value={login}
+              value={email}
             />
             <input
               name="password"

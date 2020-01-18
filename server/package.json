@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "nodemon --exec babel-node src/index.js",
-    "test:run-server": "TEST_DATABASE=invoy npm start",
+    "test:run-server": "TEST_DATABASE=invoy yarn dev",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "test": "echo \"No test specified\" && exit 0"
   },

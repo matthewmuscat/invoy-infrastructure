@@ -5,8 +5,8 @@ const API_URL = 'http://localhost:8000/graphql';
 export const signIn = async variables =>
   await axios.post(API_URL, {
     query: `
-      mutation ($login: String!, $password: String!) {
-        signIn(login: $login, password: $password) {
+      mutation ($email: String!, $password: String!) {
+        signIn(email: $email, password: $password) {
           token
         }
       }
@@ -23,7 +23,6 @@ export const me = async token =>
           me {
             id
             email
-            username
           }
         }
       `,
@@ -43,7 +42,6 @@ export const user = async variables =>
       query ($id: ID!) {
         user(id: $id) {
           id
-          username
           email
           role
         }
@@ -58,7 +56,6 @@ export const users = async () =>
       {
         users {
           id
-          username
           email
           role
         }
@@ -70,12 +67,10 @@ export const signUp = async variables =>
   axios.post(API_URL, {
     query: `
       mutation(
-        $username: String!,
         $email: String!,
         $password: String!
       ) {
         signUp(
-          username: $username,
           email: $email,
           password: $password
         ) {
@@ -91,9 +86,9 @@ export const updateUser = async (variables, token) =>
     API_URL,
     {
       query: `
-        mutation ($username: String!) {
-          updateUser(username: $username) {
-            username
+        mutation ($email: String!) {
+          updateUser(email: $email) {
+            email
           }
         }
       `,

@@ -9,7 +9,6 @@ describe('users', () => {
         data: {
           user: {
             id: '1',
-            username: 'rwieruch',
             email: 'hello@robin.com',
             role: 'ADMIN',
           },
@@ -41,13 +40,11 @@ describe('users', () => {
           users: [
             {
               id: '1',
-              username: 'rwieruch',
               email: 'hello@robin.com',
               role: 'ADMIN',
             },
             {
               id: '2',
-              username: 'ddavids',
               email: 'hello@david.com',
               role: null,
             },
@@ -79,7 +76,6 @@ describe('users', () => {
         data: {
           me: {
             id: '1',
-            username: 'rwieruch',
             email: 'hello@robin.com',
           },
         },
@@ -92,7 +88,7 @@ describe('users', () => {
           },
         },
       } = await userApi.signIn({
-        login: 'rwieruch',
+        email: 'hello@david.com',
         password: 'rwieruch',
       });
 
@@ -113,7 +109,6 @@ describe('users', () => {
           },
         },
       } = await userApi.signUp({
-        username: 'Mark',
         email: 'mark@gmule.com',
         password: 'asdasdasd',
       });
@@ -126,7 +121,6 @@ describe('users', () => {
 
       expect(me).to.eql({
         id: '3',
-        username: 'Mark',
         email: 'mark@gmule.com',
       });
 
@@ -136,9 +130,9 @@ describe('users', () => {
         data: {
           data: { updateUser },
         },
-      } = await userApi.updateUser({ username: 'Mark' }, token);
+      } = await userApi.updateUser({ email: 'official@gmail.com' }, token);
 
-      expect(updateUser.username).to.eql('Mark');
+      expect(updateUser.email).to.eql('official@gmail.com');
 
       // delete as admin
 
@@ -149,7 +143,7 @@ describe('users', () => {
           },
         },
       } = await userApi.signIn({
-        login: 'rwieruch',
+        email: 'rwieruch',
         password: 'rwieruch',
       });
 
@@ -172,7 +166,7 @@ describe('users', () => {
           },
         },
       } = await userApi.signIn({
-        login: 'ddavids',
+        email: 'hello@david.com',
         password: 'ddavids',
       });
 
@@ -184,18 +178,18 @@ describe('users', () => {
     });
   });
 
-  describe('updateUser(username: String!): User!', () => {
+  describe('updateUser(email: String!): User!', () => {
     it('returns an error because only authenticated users can update a user', async () => {
       const {
         data: { errors },
-      } = await userApi.updateUser({ username: 'Mark' });
+      } = await userApi.updateUser({ email: 'official@gmail.com' });
 
       expect(errors[0].message).to.eql('Not authenticated as user.');
     });
   });
 
-  describe('signIn(login: String!, password: String!): Token!', () => {
-    it('returns a token when a user signs in with username', async () => {
+  describe('signIn(email: String!, password: String!): Token!', () => {
+    it('returns a token when a user signs in with email', async () => {
       const {
         data: {
           data: {
@@ -203,7 +197,7 @@ describe('users', () => {
           },
         },
       } = await userApi.signIn({
-        login: 'ddavids',
+        email: 'hello@david.com',
         password: 'ddavids',
       });
 
@@ -218,7 +212,7 @@ describe('users', () => {
           },
         },
       } = await userApi.signIn({
-        login: 'hello@david.com',
+        email: 'hello@david.com',
         password: 'ddavids',
       });
 
@@ -229,7 +223,7 @@ describe('users', () => {
       const {
         data: { errors },
       } = await userApi.signIn({
-        login: 'ddavids',
+        email: 'hello@david.com',
         password: 'dontknow',
       });
 
@@ -241,7 +235,7 @@ describe('users', () => {
     const {
       data: { errors },
     } = await userApi.signIn({
-      login: 'dontknow',
+      email: 'hello@david.com',
       password: 'ddavids',
     });
 

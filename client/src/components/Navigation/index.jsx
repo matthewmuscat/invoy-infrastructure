@@ -22,7 +22,7 @@ const NavigationAuth = ({ session }) => (
       <Link to={routes.LANDING}>Landing</Link>
     </li>
     <li>
-      <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
+      <Link to={routes.ACCOUNT}>Account ({session.me.email})</Link>
     </li>
     {session &&
       session.me &&
