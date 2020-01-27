@@ -16,9 +16,9 @@ export const SIGN_IN_MUTATION = gql`
   }
 `
 
-export const CREATE_MESSAGE_MUTATION = gql`
+export const CREATE_INVOICE_MUTATION = gql`
   mutation($text: String!) {
-    createMessage(text: $text) {
+    createInvoice(text: $text) {
       id
       text
       createdAt
@@ -30,8 +30,8 @@ export const CREATE_MESSAGE_MUTATION = gql`
   }
 `
 
-export const DELETE_MESSAGE_MUTATION = gql`
+export const DELETE_INVOICE_MUTATION = gql`
   mutation($id: ID!) {
-    deleteMessage(id: $id)
+    deleteInvoice(id: $id)
   }
 `

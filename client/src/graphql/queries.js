@@ -1,8 +1,8 @@
 import gql from "graphql-tag"
 
-export const GET_ALL_MESSAGES_WITH_USERS_QUERY = gql`
+export const GET_ALL_INVOICES_WITH_USERS_QUERY = gql`
   query {
-    messages(order: "DESC") @connection(key: "MessagesConnection") {
+    invoices(order: "DESC") @connection(key: "InvoicesConnection") {
       edges {
         id
         text

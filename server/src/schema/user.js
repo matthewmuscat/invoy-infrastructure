@@ -32,6 +32,6 @@ export default gql`
     phone_number: String!
     email: String!
     role: String
-    messages: [Message!]
+    invoices: [Invoice!]
   }
 `;

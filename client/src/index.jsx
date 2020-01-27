@@ -8,9 +8,10 @@ import { getMainDefinition } from "apollo-utilities"
 import { ApolloLink, split } from "apollo-link"
 import { HttpLink } from "apollo-link-http"
 import { WebSocketLink } from "apollo-link-ws"
+import { StripeProvider } from "react-stripe-elements"
 import { onError } from "apollo-link-error"
 import { InMemoryCache } from "apollo-cache-inmemory"
-
+import { config } from "./config"
 import App from "./components/App"
 import { signOut } from "./components/SignOut"
 
@@ -77,7 +78,9 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <StripeProvider apiKey={config.STRIPE_KEY}>
+      <App />
+    </StripeProvider>
   </ApolloProvider>,
   document.getElementById("root")
 )

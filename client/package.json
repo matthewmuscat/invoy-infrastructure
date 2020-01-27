@@ -46,7 +46,8 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "serve": "^11.1.0",
-    "stripe": "^7.13.0",
+    "stripe": "^7.15.0",
+    "stripe-client": "^1.1.5",
     "subscriptions-transport-ws": "^0.9.15",
     "superagent": "^5.1.0",
     "underscore": "^1.9.1",
@@ -94,12 +95,10 @@
   "lint-staged": {
     "linters": {
       "src/**/*{jsx}": [
-        "eslint --fix",
-        "git add"
+        "eslint --fix"
       ],
       "src/views/**/*.{tsx,jsx}": [
-        "eslint --fix",
-        "git add"
+        "eslint --fix"
       ],
       "src/**/*.{css,scss}": "stylelint"
     }

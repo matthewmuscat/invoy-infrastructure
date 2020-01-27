@@ -4,14 +4,14 @@ import { Query } from "react-apollo"
 import gql from "graphql-tag"
 import _ from "lodash"
 
-import MessageDelete from "../MessageDelete"
+import InvoiceDelete from "../InvoiceDelete"
 import Loading from "../../Loading"
 import withSession from "../../Session/withSession"
 
-const MESSAGE_CREATED = gql`
+const INVOICE_CREATED = gql`
   subscription {
-    messageCreated {
-      message {
+    invoiceCreated {
+      invoice {
         id
         text
         createdAt
@@ -26,10 +26,10 @@ const MESSAGE_CREATED = gql`
   }
 `
 
-const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
+const GET_PAGINATED_INVOICES_WITH_USERS = gql`
   query($cursor: String, $limit: Int!) {
-    messages(cursor: $cursor, limit: $limit)
-      @connection(key: "MessagesConnection") {
+    invoices(cursor: $cursor, limit: $limit)
+      @connection(key: "InvoicesConnection") {
       edges {
         id
         text
@@ -49,44 +49,44 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
   }
 `
 
-const Messages = ({ limit }) => (
+const Invoices = ({ limit }) => (
   <Query
-    query={GET_PAGINATED_MESSAGES_WITH_USERS}
+    query={GET_PAGINATED_INVOICES_WITH_USERS}
     variables={{ limit }}
   >
     {({ data, loading, error, fetchMore, subscribeToMore }) => {
       if (!data) {
         return (
           <div>
-            There are no messages yet ... Try to create one by
+            There are no invoices yet ... Try to create one by
             yourself.
           </div>
         )
       }
 
-      const { messages } = data
+      const { invoices } = data
 
-      if (loading || !messages) {
+      if (loading || !invoices) {
         return <Loading />
       }
 
-      const { edges, pageInfo } = messages
+      const { edges, pageInfo } = invoices
 
       return (
         <Fragment>
-          <MessageList
-            messages={edges}
+          <InvoiceList
+            invoices={edges}
             subscribeToMore={subscribeToMore}
           />
 
           {pageInfo.hasNextPage && (
-            <MoreMessagesButton
+            <MoreInvoicesButton
               fetchMore={fetchMore}
               limit={limit}
               pageInfo={pageInfo}
             >
               More
-            </MoreMessagesButton>
+            </MoreInvoicesButton>
           )}
         </Fragment>
       )
@@ -94,7 +94,7 @@ const Messages = ({ limit }) => (
   </Query>
 )
 
-const MoreMessagesButton = ({
+const MoreInvoicesButton = ({
   limit,
   pageInfo,
   fetchMore,
@@ -113,11 +113,11 @@ const MoreMessagesButton = ({
           }
 
           return {
-            messages: {
-              ...fetchMoreResult.messages,
+            invoices: {
+              ...fetchMoreResult.invoices,
               edges: [
-                ...previousResult.messages.edges,
-                ...fetchMoreResult.messages.edges,
+                ...previousResult.invoices.edges,
+                ...fetchMoreResult.invoices.edges,
               ],
             },
           }
@@ -130,27 +130,27 @@ const MoreMessagesButton = ({
   </button>
 )
 
-class MessageList extends Component {
+class InvoiceList extends Component {
   componentDidMount() {
-    this.subscribeToMoreMessage()
+    this.subscribeToMoreInvoice()
   }
-  subscribeToMoreMessage = () => {
+  subscribeToMoreInvoice = () => {
     this.props.subscribeToMore({
-      document: MESSAGE_CREATED,
+      document: INVOICE_CREATED,
       updateQuery: (previousResult, { subscriptionData }) => {
         if (!subscriptionData.data) {
           return previousResult
         }
 
-        const { messageCreated } = subscriptionData.data
+        const { invoiceCreated } = subscriptionData.data
 
         return {
           ...previousResult,
-          messages: {
-            ...previousResult.messages,
+          invoices: {
+            ...previousResult.invoices,
             edges: [
-              messageCreated.message,
-              ...previousResult.messages.edges,
+              invoiceCreated.invoice,
+              ...previousResult.invoices.edges,
             ],
           },
         }
@@ -159,26 +159,26 @@ class MessageList extends Component {
   };
 
   render() {
-    const { messages } = this.props
+    const { invoices } = this.props
 
-    return messages.map(message => (
-      <MessageItem key={message.id} message={message} />
+    return invoices.map(invoice => (
+      <InvoiceItem invoice={invoice} key={invoice.id} />
     ))
   }
 }
 
-const MessageItemBase = ({ message, session }) => (
+const InvoiceItemBase = ({ invoice, session }) => (
   <div>
-    <h3>{_.concat(message.user.first_name, " ", message.user.last_name)}</h3>
-    <small>{message.createdAt}</small>
-    <p>{message.text}</p>
+    <h3>{_.concat(invoice.user.first_name, " ", invoice.user.last_name)}</h3>
+    <small>{invoice.createdAt}</small>
+    <p>{invoice.text}</p>
 
-    {session && session.me && message.user.id === session.me.id && (
-      <MessageDelete message={message} />
+    {session && session.me && invoice.user.id === session.me.id && (
+      <InvoiceDelete invoice={invoice} />
     )}
   </div>
 )
 
-const MessageItem = withSession(MessageItemBase)
+const InvoiceItem = withSession(InvoiceItemBase)
 
-export default Messages
+export default Invoices

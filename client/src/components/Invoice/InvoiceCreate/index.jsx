@@ -1,11 +1,11 @@
 // @flow
 import React, { Component } from "react"
 import { Mutation } from "react-apollo"
-import { CREATE_MESSAGE_MUTATION } from "../../../graphql/mutations"
+import { CREATE_INVOICE_MUTATION } from "../../../graphql/mutations"
 
 import ErrorMessage from "../../Error/index.jsx"
 
-class MessageCreate extends Component {
+class InvoiceCreate extends Component {
   state = { text: "" };
 
   onChange = (event) => {
@@ -13,11 +13,11 @@ class MessageCreate extends Component {
     this.setState({ [name]: value })
   };
 
-  onSubmit = async (event, createMessage) => {
+  onSubmit = async (event, createInvoice) => {
     event.preventDefault()
 
     try {
-      await createMessage()
+      await createInvoice()
       this.setState({ text: "" })
     } catch (error) {}
   };
@@ -27,11 +27,11 @@ class MessageCreate extends Component {
 
     return (
       <Mutation
-        mutation={CREATE_MESSAGE_MUTATION}
+        mutation={CREATE_INVOICE_MUTATION}
         variables={{ text }}
         // Not used anymore because of Subscription
 
-        // update={(cache, { data: { createMessage } }) => {
+        // update={(cache, { data: { createInvoice } }) => {
         //   const data = cache.readQuery({
         //     query: GET_ALL_MESSAGES_WITH_USERS,
         //   });
@@ -42,16 +42,16 @@ class MessageCreate extends Component {
         //       ...data,
         //       messages: {
         //         ...data.messages,
-        //         edges: [createMessage, ...data.messages.edges],
+        //         edges: [createInvoice, ...data.messages.edges],
         //         pageInfo: data.messages.pageInfo,
         //       },
         //     },
         //   });
         // }}
       >
-        {(createMessage, { data, loading, error }) => (
+        {(createInvoice, { data, loading, error }) => (
           <form
-            onSubmit={event => this.onSubmit(event, createMessage)}
+            onSubmit={event => this.onSubmit(event, createInvoice)}
           >
             <textarea
               name="text"
@@ -70,4 +70,4 @@ class MessageCreate extends Component {
   }
 }
 
-export default MessageCreate
+export default InvoiceCreate

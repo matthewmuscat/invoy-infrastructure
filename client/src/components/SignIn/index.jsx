@@ -8,6 +8,15 @@ import { SignUpLink } from "../SignUp"
 import * as routes from "../../constants/routes"
 import ErrorMessage from "../Error"
 
+type State = {|
+  email: string,
+  password: string,
+|}
+
+type Props = {|
+  refetch: () => void,
+|}
+
 const SignInPage = ({ history, refetch }) => (
   <div>
     <h1>Log In</h1>
@@ -21,15 +30,18 @@ const INITIAL_STATE = {
   password: "",
 }
 
-class SignInForm extends Component {
-  state = { ...INITIAL_STATE };
+class SignInForm extends Component<Props, State> {
+  constructor (props: Props) {
+    super(props)
+    this.state = { ...INITIAL_STATE }
+  }
 
-  onChange = (event) => {
+  onChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     this.setState({ [name]: value })
   };
 
-  onSubmit = (event, signIn) => {
+  onSubmit = (event: SyntheticEvent<HTMLButtonElement>, signIn) => {
     signIn().then(async ({ data }) => {
       this.setState({ ...INITIAL_STATE })
 
@@ -44,6 +56,9 @@ class SignInForm extends Component {
   };
 
   render() {
+    console.log("State", this.state)
+    console.log("Props", this.props)
+
     const { email, password } = this.state
 
     const isInvalid = password === "" || email === ""

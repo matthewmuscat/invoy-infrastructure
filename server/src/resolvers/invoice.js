@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import { combineResolvers } from 'graphql-resolvers';
 
 import pubsub, { EVENTS } from '../subscription';
-import { isAuthenticated, isMessageOwner } from './authorization';
+import { isAuthenticated, isInvoiceOwner } from './authorization';
 
 const toCursorHash = string => Buffer.from(string).toString('base64');
 
@@ -11,7 +11,7 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    messages: async (parent, { cursor, limit = 100 }, { models }) => {
+    invoices: async (parent, { cursor, limit = 100 }, { models }) => {
       const cursorOptions = cursor
         ? {
             where: {
@@ -22,14 +22,14 @@ export default {
           }
         : {};
 
-      const messages = await models.Message.findAll({
+      const invoices = await models.Invoice.findAll({
         order: [['createdAt', 'DESC']],
         limit: limit + 1,
         ...cursorOptions,
       });
 
-      const hasNextPage = messages.length > limit;
-      const edges = hasNextPage ? messages.slice(0, -1) : messages;
+      const hasNextPage = invoices.length > limit;
+      const edges = hasNextPage ? invoices.slice(0, -1) : invoices;
 
       return {
         edges,
@@ -41,46 +41,46 @@ export default {
         },
       };
     },
-    message: async (parent, { id }, { models }) => {
-      return await models.Message.findByPk(id);
+    invoice: async (parent, { id }, { models }) => {
+      return await models.Invoice.findByPk(id);
     },
   },
 
   Mutation: {
-    createMessage: combineResolvers(
+    createInvoice: combineResolvers(
       isAuthenticated,
       async (parent, { text }, { models, me }) => {
-        const message = await models.Message.create({
+        const invoice = await models.Invoice.create({
           text,
           userId: me.id,
         });
 
-        pubsub.publish(EVENTS.MESSAGE.CREATED, {
-          messageCreated: { message },
+        pubsub.publish(EVENTS.INVOICE.CREATED, {
+          InvoiceCreated: { invoice },
         });
 
-        return message;
+        return invoice;
       },
     ),
 
-    deleteMessage: combineResolvers(
+    deleteInvoice: combineResolvers(
       isAuthenticated,
-      isMessageOwner,
+      isInvoiceOwner,
       async (parent, { id }, { models }) => {
-        return await models.Message.destroy({ where: { id } });
+        return await models.Invoice.destroy({ where: { id } });
       },
     ),
   },
 
-  Message: {
-    user: async (message, args, { loaders }) => {
-      return await loaders.user.load(message.userId);
+  Invoice: {
+    user: async (invoice, args, { loaders }) => {
+      return await loaders.user.load(invoice.userId);
     },
   },
 
   Subscription: {
-    messageCreated: {
-      subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED),
+    InvoiceCreated: {
+      subscribe: () => pubsub.asyncIterator(EVENTS.INVOICE.CREATED),
     },
   },
 };

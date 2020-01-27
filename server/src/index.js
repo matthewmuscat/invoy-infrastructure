@@ -93,7 +93,7 @@ const flag = true
 
 sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {
   if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
+    createUsersWithInvoices(new Date());
   }
 
   httpServer.listen({ port }, () => {
@@ -101,13 +101,13 @@ sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {
   });
 });
 
-const createUsersWithMessages = async date => {
+const createUsersWithInvoices = async date => {
   await models.User.create(
     {
       email: 'hello@robin.com',
       password: 'rwieruch',
       role: 'ADMIN',
-      messages: [
+      invoices: [
         {
           text: 'Published the Road to learn React',
           createdAt: date.setSeconds(date.getSeconds() + 1),
@@ -115,7 +115,7 @@ const createUsersWithMessages = async date => {
       ],
     },
     {
-      include: [models.Message],
+      include: [models.Invoice],
     },
   );
 
@@ -123,7 +123,7 @@ const createUsersWithMessages = async date => {
     {
       email: 'hello@david.com',
       password: 'ddavids',
-      messages: [
+      invoices: [
         {
           text: 'Happy to release ...',
           createdAt: date.setSeconds(date.getSeconds() + 1),
@@ -135,7 +135,7 @@ const createUsersWithMessages = async date => {
       ],
     },
     {
-      include: [models.Message],
+      include: [models.Invoice],
     },
   );
 };

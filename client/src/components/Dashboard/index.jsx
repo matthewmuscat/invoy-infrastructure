@@ -4,14 +4,14 @@ import React from "react"
 
 import withSession from "../Session/withSession"
 
-import { MessageCreate, Messages } from "../Message"
+import { InvoiceCreate, Invoices } from "../Invoice"
 
 const Dashboard = ({ session }) => (
   <div>
     <h2>Invoices</h2>
 
-    {session && session.me && <MessageCreate />}
-    <Messages limit={2} />
+    {session && session.me && <InvoiceCreate />}
+    <Invoices limit={10} />
   </div>
 )
 

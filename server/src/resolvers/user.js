@@ -86,8 +86,8 @@ export default {
   },
 
   User: {
-    messages: async (user, args, { models }) => {
-      return await models.Message.findAll({
+    invoices: async (user, args, { models }) => {
+      return await models.Invoice.findAll({
         where: {
           userId: user.id,
         },
