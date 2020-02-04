@@ -4,7 +4,6 @@ import React, { Component } from "react"
 import { Link, withRouter } from "react-router-dom"
 import { Mutation } from "react-apollo"
 import { SIGN_UP_MUTATION } from "../../graphql/mutations"
-
 import * as routes from "../../constants/routes"
 import ErrorMessage from "../Error/index.jsx"
 import styles from "./styles.module.scss"

@@ -1,5 +1,6 @@
 logfile
 
 .env
+src/config.js
 
 node_modules/
