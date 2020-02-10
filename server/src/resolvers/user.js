@@ -33,12 +33,12 @@ export default {
   Mutation: {
     signUp: async (
       parent,
-      { first_name, last_name, phone_number, email, password },
+      { first_name, last_name, phone_number, dob, email, password },
       { models, secret },
     ) => {
 
       const User = new Promise(async (resolve, reject) => {
-        models.User.create({ first_name, last_name, phone_number, email, password })
+        await models.User.create({ first_name, last_name, phone_number, dob, email, password })
         .then(async (user) => {
           resolve(user)
         }).catch(async err => {
@@ -52,13 +52,32 @@ export default {
         })
       })
 
-      const StripeUser = new Promise((resolve, reject) => {
-        stripe.accounts.create({ type: 'custom', business_type: 'individual', country: 'AU', email,
+      const StripeUser = new Promise(async (resolve, reject) => {
+        const day = dob.getUTCDate() + 1
+        const month = dob.getUTCMonth()
+        const year = dob.getFullYear()
+        await stripe.accounts.create({ type: 'custom', business_type: 'individual', country: 'AU', email,
           individual: {
             email,
             first_name,
+            dob: {
+              day,
+              month,
+              year,
+            },
             last_name,
             phone: phone_number,
+            address: {
+              city: "Brisbane",
+              country: "AU",
+              line1: "501 Adelaide Street",
+              line2: "4302",
+              postal_code: "4000",
+              state: "Queensland",
+            },
+          },
+          business_profile: {
+            url: "www.google.com"
           },
           requested_capabilities: [
             'card_payments',
@@ -68,12 +87,15 @@ export default {
         .catch(err => reject(err))
       })
 
-      return Promise.all([
+      return Promise.all([ // these should only post if both work.
         User,
         StripeUser,
       ]).then(result => {
         const dbUser = result[0]
         const stripeUser = result[1]
+
+        // are valid so update user with new
+        
 
         return { token: createToken(dbUser, secret, '30m') }
       }).catch(({ message }) => { throw new UserInputError(message) })
@@ -117,6 +139,42 @@ export default {
         })
       },
     ),
+
+    // acceptTos: async (
+    //   parent,
+    //   { email, password },
+    //   { models, secret },
+    //   ) => {
+    //     await stripe.accounts.update(
+    //       {{CONNECTED_STRIPE_ACCOUNT_ID}},
+    //       {
+    //         tos_acceptance: {
+    //           date: Math.floor(Date.now() / 1000),
+    //           ip: request.connection.remoteAddress // Assumes you're not using a proxy
+    //         }
+    //       }
+    //     );
+        
+
+
+
+
+    //   // const user = await models.User.findByLogin(email)
+
+    //   // if (!user) {
+    //   //   throw new UserInputError(
+    //   //     'No user found with this login credentials.',
+    //   //   )
+    //   // }
+
+    //   // const isValid = await user.validatePassword(password)
+
+    //   // if (!isValid) {
+    //   //   throw new AuthenticationError('Invalid password.')
+    //   // }
+
+    //   // return { token: createToken(user, secret, '30m') }
+    // }
   },
 
   User: {

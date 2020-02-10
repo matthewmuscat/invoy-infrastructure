@@ -12,6 +12,7 @@ export default gql`
       first_name: String!
       last_name: String!
       phone_number: String!
+      dob: Date!
       email: String!
       password: String!
     ): Token!
@@ -30,6 +31,7 @@ export default gql`
     first_name: String!
     last_name: String!
     phone_number: String!
+    dob: Date!
     email: String!
     role: String
     invoices: [Invoice!]

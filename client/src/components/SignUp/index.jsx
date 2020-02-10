@@ -12,6 +12,11 @@ const INITIAL_STATE = {
   first_name: "",
   last_name: "",
   phone_number: "",
+  dob: {
+    day: "",
+    month: "",
+    year: "",
+  },
   email: "",
   password: "",
   passwordConfirmation: "",
@@ -31,6 +36,16 @@ class SignUpForm extends Component {
     const { name, value } = event.target
     this.setState({ [name]: value })
   };
+  
+  updateObjectTextfield = (e, substitute) => {
+    const { name, id, value } = e.target
+    this.setState(prevState => ({
+      [id || substitute]: {
+        ...prevState[id || substitute],
+        [name]: value,
+      },
+    }))
+  }
 
   onSubmit = (event, signUp) => {
     signUp().then(async ({ data }) => {
@@ -45,14 +60,7 @@ class SignUpForm extends Component {
   };
 
   render() {
-    const {
-      first_name,
-      last_name,
-      phone_number,
-      email,
-      password,
-      passwordConfirmation,
-    } = this.state
+    const { first_name, last_name, phone_number, dob, email, password, passwordConfirmation } = this.state
 
     const isInvalid =
       password !== passwordConfirmation ||
@@ -60,12 +68,15 @@ class SignUpForm extends Component {
       email === "" ||
       first_name === "" ||
       last_name === "" ||
-      phone_number === ""
+      phone_number === "" ||
+      dob === {}
+
+    const parsedDob = new Date(Number(dob.year), Number(dob.month), Number(dob.day))
 
     return (
       <Mutation
         mutation={SIGN_UP_MUTATION}
-        variables={{ first_name, last_name, phone_number, email, password }}
+        variables={{ first_name, last_name, phone_number, dob: parsedDob, email, password }}
       >
         {(signUp, { data, loading, error }) => (
           <form className={styles.formSection} onSubmit={event => this.onSubmit(event, signUp)}>
@@ -90,6 +101,30 @@ class SignUpForm extends Component {
               placeholder="Phone Number"
               type="text"
               value={phone_number}
+            />
+            <input
+              id="dob"
+              name="day"
+              onChange={e => this.updateObjectTextfield(e)}
+              placeholder="Date of Birth (Day)"
+              type="number"
+              value={dob.day}
+            />
+            <input
+              id="dob"
+              name="month"
+              onChange={e => this.updateObjectTextfield(e)}
+              placeholder="Date of Birth (Month)"
+              type="number"
+              value={dob.month}
+            />
+            <input
+              id="dob"
+              name="year"
+              onChange={e => this.updateObjectTextfield(e)}
+              placeholder="Date of Birth (Year)"
+              type="number"
+              value={dob.year}
             />
             <input
               name="email"

@@ -1,5 +1,5 @@
 export const config = {
-  STRIPE_KEY: "pk_test_o6ZpMaZalx0AGlPtRm3OPUlG00YK9eo8dx",
+  STRIPE_KEY: "pk_live_wPfAfV0GeQ7xMf1a1d4Ikz0q00BIHEER2V",
   serverUrl: "http://localhost:8000",
   clientUrl: "http://localhost:3000",
   assemblyEndpoint: "https://test.api.promisepay.com/",
