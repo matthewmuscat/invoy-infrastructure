@@ -43,12 +43,11 @@ export default {
           resolve(user)
         }).catch(async err => {
           const userExists = await models.User.findByLogin(email)
-
           if (userExists) {
-            reject({ message: new UserInputError('A user already has this email address. Please provide a different email address or login.')})
+            reject(({ message: new UserInputError('A user already has this email address. Please provide a different email address or login.'), rejectType: "user"}))
+          } else {
+            reject(({ message: err.errors[0].message || new UserInputError("Could not create user. Please check you have provided sufficient information."), rejectType: "user" }))
           }
-
-          reject({ message: err.errors[0].message || new UserInputError("Could not create user. Please check you have provided sufficient information.") })
         })
       })
 
@@ -84,21 +83,42 @@ export default {
             'transfers',
           ],
         }).then(account => resolve(account))
-        .catch(err => reject(err))
+        .catch(err => reject({message: err.raw.message, rejectType: "stripe"}))
       })
 
       return Promise.all([ // these should only post if both work.
         User,
         StripeUser,
       ]).then(result => {
-        const dbUser = result[0]
-        const stripeUser = result[1]
-
-        // are valid so update user with new
-        
-
-        return { token: createToken(dbUser, secret, '30m') }
-      }).catch(({ message }) => { throw new UserInputError(message) })
+        const userToStore = result[0] // sequelize User      
+        return { token: createToken(userToStore, secret, '30m') }
+      }).catch(async ({ message, rejectType }) => {
+        switch (rejectType) {
+          case "user":
+            StripeUser.then((user) => {
+              if (user && user.id) {
+                stripe.accounts.del(
+                  user.id,
+                  function(err, confirmation) {
+                    throw new UserInputError("Failed to delete stripe account")
+                  }
+                )
+              }
+            }).catch(err => err)
+            break;
+          case "stripe":
+            User.then((user) => {
+              const { id } = user.dataValues
+                if (user && id) {
+                  user.destroy()
+                }
+            })
+            break;
+          default:
+            console.log("Unknown rejectType", rejectType)
+            break;
+        }
+        throw new UserInputError(message) })
     },
 
     signIn: async (
