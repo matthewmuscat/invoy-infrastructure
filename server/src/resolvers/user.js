@@ -100,7 +100,11 @@ export default {
                 stripe.accounts.del(
                   user.id,
                   function(err, confirmation) {
-                    throw new UserInputError("Failed to delete stripe account")
+                    if (confirmation && confirmation.deleted) {
+                      console.log("Stripe User deleted successfully")
+                    } else if (err) {
+                      console.log("Errors: ", err)
+                    }
                   }
                 )
               }
