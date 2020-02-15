@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { config } from "./config"
 import cors from 'cors';
 import morgan from 'morgan';
 import http from 'http';
@@ -16,9 +17,18 @@ import models, { sequelize } from './models';
 import loaders from './loaders';
 
 const app = express();
+const AWS_SDK = require('aws-sdk');
+
+// Configure AWS
+AWS_SDK.config.update({
+  accessKeyId: config.AWS_S3_ACCESS_KEY_ID,
+  secretAccessKey: config.AWS_S3_SECRET_ACCESS_KEY
+});
+
+export const AWS = AWS_SDK
+export const AWS_S3 = new AWS.S3();
 
 app.use(cors());
-
 app.use(morgan('dev'));
 
 const getMe = async req => {
@@ -71,6 +81,7 @@ const server = new ApolloServer({
         models,
         me,
         secret: process.env.SECRET,
+        connection: req.connection,
         loaders: {
           user: new DataLoader(keys =>
             loaders.user.batchUsers(keys, models),
@@ -100,42 +111,3 @@ sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
-
-const createUsersWithInvoices = async date => {
-  await models.User.create(
-    {
-      email: 'hello@robin.com',
-      password: 'rwieruch',
-      role: 'ADMIN',
-      invoices: [
-        {
-          text: 'Published the Road to learn React',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Invoice],
-    },
-  );
-
-  await models.User.create(
-    {
-      email: 'hello@david.com',
-      password: 'ddavids',
-      invoices: [
-        {
-          text: 'Happy to release ...',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-        {
-          text: 'Published a complete ...',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Invoice],
-    },
-  );
-};

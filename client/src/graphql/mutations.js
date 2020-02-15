@@ -35,3 +35,15 @@ export const DELETE_INVOICE_MUTATION = gql`
     deleteInvoice(id: $id)
   }
 `
+
+export const CREATE_VERIFICATION_MUTATION = gql`
+  mutation($files: [FileInput!]!) {
+    createVerification(files: $files) {
+      file_location
+      user {
+        id
+        email
+      }
+    }
+  }
+`

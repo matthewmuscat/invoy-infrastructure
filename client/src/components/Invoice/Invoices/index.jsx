@@ -10,7 +10,7 @@ import withSession from "../../Session/withSession"
 
 const INVOICE_CREATED = gql`
   subscription {
-    invoiceCreated {
+    InvoiceCreated {
       invoice {
         id
         text
@@ -142,14 +142,14 @@ class InvoiceList extends Component {
           return previousResult
         }
 
-        const { invoiceCreated } = subscriptionData.data
+        const { InvoiceCreated } = subscriptionData.data
 
         return {
           ...previousResult,
           invoices: {
             ...previousResult.invoices,
             edges: [
-              invoiceCreated.invoice,
+              InvoiceCreated.invoice,
               ...previousResult.invoices.edges,
             ],
           },

@@ -151,6 +151,10 @@ class SignUpForm extends Component {
               Register
             </button>
 
+            <div>
+              <p>By registering, you agree to Stripe's <a href="https://stripe.com/legal">Services Agreement</a> and the <a href="https://stripe.com/connect-account/legal">Stripe Connected Account Agreement.</a></p>
+            </div>
+
             {error && <ErrorMessage error={error} />}
           </form>
         )}

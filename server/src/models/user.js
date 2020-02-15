@@ -43,6 +43,13 @@ const user = (sequelize, DataTypes) => {
         len: [7, 42],
       },
     },
+    account: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        notEmpty: false,
+      },
+    },
     role: {
       type: DataTypes.STRING,
     },
@@ -50,6 +57,7 @@ const user = (sequelize, DataTypes) => {
 
   User.associate = models => {
     User.hasMany(models.Invoice, { onDelete: 'CASCADE' });
+    User.hasMany(models.Verification, { onDelete: 'CASCADE' });
   };
 
   User.findByLogin = async login => {

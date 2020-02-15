@@ -19,7 +19,9 @@ class InvoiceCreate extends Component {
     try {
       await createInvoice()
       this.setState({ text: "" })
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   render() {

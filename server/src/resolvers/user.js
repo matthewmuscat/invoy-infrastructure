@@ -34,7 +34,7 @@ export default {
     signUp: async (
       parent,
       { first_name, last_name, phone_number, dob, email, password },
-      { models, secret },
+      { models, secret, connection },
     ) => {
 
       const User = new Promise(async (resolve, reject) => {
@@ -89,8 +89,23 @@ export default {
       return Promise.all([ // these should only post if both work.
         User,
         StripeUser,
-      ]).then(result => {
-        const userToStore = result[0] // sequelize User      
+      ]).then(async result => {
+        const userToStore = result[0].dataValues
+        const userId = userToStore.id
+        const stripeAccount = result[1]
+        const stripeAccountId = stripeAccount.id
+
+        // update model User to account for stripe account
+        await models.User.update({ account: stripeAccountId }, { where: { id: userId } })
+
+        await stripe.accounts.update(stripeAccountId, {
+            tos_acceptance: {
+              date: Math.floor(Date.now() / 1000),
+              ip: connection.remoteAddress // Assumes you're not using a proxy
+            }
+          }
+        )
+
         return { token: createToken(userToStore, secret, '30m') }
       }).catch(async ({ message, rejectType }) => {
         switch (rejectType) {
