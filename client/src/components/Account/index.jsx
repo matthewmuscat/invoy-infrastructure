@@ -41,6 +41,8 @@ class AccountPage extends Component<{}, State> {
     //Make a request to server and send formData
   }
 
+  console.log("yew")
+
   handleUpload = async (event, createInvoice) => {
     event.preventDefault()
 
