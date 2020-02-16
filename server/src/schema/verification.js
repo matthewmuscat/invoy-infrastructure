@@ -4,7 +4,7 @@ export default gql`
   extend type Mutation {
     createVerification(
       files: [FileInput!]!
-    ): [File!]!
+    ): Verification!
   }
 
   input FileInput {
@@ -16,8 +16,9 @@ export default gql`
     type: String!
   }
 
-  type File {
-    file_location: String!
+  type Verification {
+    file_location_back: String!
+    file_location_front: String!
     user: User!
   }
 `;

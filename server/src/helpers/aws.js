@@ -5,7 +5,6 @@ export const uploadFile = async (bucket, s3, file) => {
   //configuring parameters
 
   // const formattedFile = new Buffer(file, 'binary')
-  console.log("File mAIN: ", file)
 
   const params = {
     Bucket: config.AWS_S3_BUCKET,

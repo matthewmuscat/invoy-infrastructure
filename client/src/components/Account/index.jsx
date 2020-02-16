@@ -26,8 +26,6 @@ class AccountPage extends Component<{}, State> {
     formData.append("file", uploadedFile)
     const returnedFormData = formData.get("file")
 
-    console.log("returnedFormData", returnedFormData)
-
     if (returnedFormData != "undefined") {
       this.setState({ files: [...files, returnedFormData] }, () => {
         if (files.length === 1) {
@@ -41,14 +39,11 @@ class AccountPage extends Component<{}, State> {
     //Make a request to server and send formData
   }
 
-  console.log("yew")
-
-  handleUpload = async (event, createInvoice) => {
+  handleUpload = async (event, createVerification) => {
     event.preventDefault()
 
     try {
-      console.log("FILES MAIN: ", this.state.files)
-      await createInvoice()
+      await createVerification()
     } catch (error) {
       console.log(error)
     }
@@ -56,11 +51,19 @@ class AccountPage extends Component<{}, State> {
 
   render() {
     const { disabled, files } = this.state
-    console.log("files", files)
+    const formattedFiles = files.map(f => ({
+      name: f.name,
+      lastModified: f.lastModified,
+      lastModifiedDate: f.lastModifiedDate,
+      webkitRelativePath: f.webkitRelativePath,
+      size: f.size,
+      type: f.type,
+    }))
+
     return (
       <Mutation
         mutation={CREATE_VERIFICATION_MUTATION}
-        variables={{ files }}
+        variables={{ files: formattedFiles }}
       >
         {(createVerification, { data, loading, error }) => (
           <div>

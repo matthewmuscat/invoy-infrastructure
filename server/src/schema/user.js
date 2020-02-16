@@ -37,5 +37,6 @@ export default gql`
     email: String!
     role: String
     invoices: [Invoice!]
+    verification: [Verification!]
   }
 `;

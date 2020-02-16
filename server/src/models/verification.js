@@ -2,7 +2,15 @@ import bcrypt from 'bcrypt';
 
 const verification = (sequelize, DataTypes) => {
   const Verification = sequelize.define('verification', {
-    file_location: {
+    file_location_front: {
+      type: DataTypes.STRING,
+      unique: false,
+      allowNull: true,
+      validate: {
+        notEmpty: false,
+      },
+    },
+    file_location_back: {
       type: DataTypes.STRING,
       unique: false,
       allowNull: true,
@@ -14,7 +22,7 @@ const verification = (sequelize, DataTypes) => {
 
   Verification.associate = models => {
     Verification.belongsTo(models.User);
-  };
+  }
 
   return Verification;
 };

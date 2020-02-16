@@ -178,47 +178,18 @@ export default {
         })
       },
     ),
-
-    // acceptTos: async (
-    //   parent,
-    //   { email, password },
-    //   { models, secret },
-    //   ) => {
-    //     await stripe.accounts.update(
-    //       {{CONNECTED_STRIPE_ACCOUNT_ID}},
-    //       {
-    //         tos_acceptance: {
-    //           date: Math.floor(Date.now() / 1000),
-    //           ip: request.connection.remoteAddress // Assumes you're not using a proxy
-    //         }
-    //       }
-    //     );
-        
-
-
-
-
-    //   // const user = await models.User.findByLogin(email)
-
-    //   // if (!user) {
-    //   //   throw new UserInputError(
-    //   //     'No user found with this login credentials.',
-    //   //   )
-    //   // }
-
-    //   // const isValid = await user.validatePassword(password)
-
-    //   // if (!isValid) {
-    //   //   throw new AuthenticationError('Invalid password.')
-    //   // }
-
-    //   // return { token: createToken(user, secret, '30m') }
-    // }
   },
 
   User: {
     invoices: async (user, args, { models }) => {
       return await models.Invoice.findAll({
+        where: {
+          userId: user.id,
+        },
+      })
+    },
+    verification: async (user, args, { models }) => {
+      return await models.Verification.findAll({
         where: {
           userId: user.id,
         },
