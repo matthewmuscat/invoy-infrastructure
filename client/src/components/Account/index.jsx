@@ -7,10 +7,10 @@ import ErrorMessage from "../Error/index.jsx"
 
 type State = {
   disabled: boolean,
-  files: string,
+  files: Array<string>,
 }
 
-class AccountPage extends Component<State> {
+class AccountPage extends Component<{}, State> {
   constructor(props) {
     super(props)
     this.state = {
