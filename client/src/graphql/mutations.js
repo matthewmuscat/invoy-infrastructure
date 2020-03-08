@@ -37,8 +37,21 @@ export const DELETE_INVOICE_MUTATION = gql`
 `
 
 export const CREATE_VERIFICATION_MUTATION = gql`
-  mutation($files: [FileInput!]!) {
+  mutation($files: FileInput!) {
     createVerification(files: $files) {
+      file_location_front
+      file_location_back
+      user {
+        id
+        email
+      }
+    }
+  }
+`
+
+export const UPLOAD_FILE_STREAM = gql`
+  mutation SingleUploadStream($files: [Upload!]!) {
+    singleUploadStream(files: $files) {
       file_location_front
       file_location_back
       user {

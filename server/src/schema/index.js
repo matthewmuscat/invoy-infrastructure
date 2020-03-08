@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
+import { gql } from "apollo-server-express"
 
-import userSchema from './user';
-import invoiceSchema from './invoice';
+import userSchema from "./user"
+import invoiceSchema from "./invoice"
 import verificationSchema from "./verification"
 
 const linkSchema = gql`
@@ -19,6 +19,6 @@ const linkSchema = gql`
   type Subscription {
     _: Boolean
   }
-`;
+`
 
-export default [linkSchema, userSchema, invoiceSchema, verificationSchema];
+export default [linkSchema, userSchema, invoiceSchema, verificationSchema]

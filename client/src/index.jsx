@@ -11,11 +11,15 @@ import { WebSocketLink } from "apollo-link-ws"
 import { StripeProvider } from "react-stripe-elements"
 import { onError } from "apollo-link-error"
 import { InMemoryCache } from "apollo-cache-inmemory"
+import { createUploadLink } from "apollo-upload-client"
 import { config } from "./config"
 import App from "./components/App"
 import { signOut } from "./components/SignOut"
 
-const httpLink = new HttpLink({ uri: "http://localhost:8000/graphql" })
+const uploadLink = createUploadLink({
+  uri: "http://localhost:8000/graphql",
+  headers: { "keep-alive": "true" },
+})
 
 const wsLink = new WebSocketLink({
   uri: `ws://localhost:8000/graphql`,
@@ -30,7 +34,7 @@ const terminatingLink = split(
     )
   },
   wsLink,
-  httpLink
+  uploadLink
 )
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -67,7 +71,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 })
 
-const link = ApolloLink.from([authLink, errorLink, terminatingLink])
+const link = ApolloLink.from([authLink, errorLink, terminatingLink, uploadLink])
 
 const cache = new InMemoryCache()
 

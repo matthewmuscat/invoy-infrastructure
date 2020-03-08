@@ -1,22 +1,18 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt"
 
 const user = (sequelize, DataTypes) => {
-  const User = sequelize.define('user', {
+  const User = sequelize.define("user", {
     first_name: {
       type: DataTypes.STRING,
       unique: false,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      validate: { notEmpty: true },
     },
     last_name: {
       type: DataTypes.STRING,
       unique: false,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      validate: { notEmpty: true },
     },
     email: {
       type: DataTypes.STRING,
@@ -31,9 +27,7 @@ const user = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      validate: { notEmpty: true },
     },
     password: {
       type: DataTypes.STRING,
@@ -46,42 +40,36 @@ const user = (sequelize, DataTypes) => {
     account: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        notEmpty: false,
-      },
+      validate: { notEmpty: false },
     },
-    role: {
-      type: DataTypes.STRING,
-    },
-  });
+    role: { type: DataTypes.STRING },
+  })
 
-  User.associate = models => {
-    User.hasMany(models.Invoice, { onDelete: 'CASCADE' });
-    User.hasMany(models.Verification, { onDelete: 'CASCADE' });
-  };
+  User.associate = (models) => {
+    User.hasMany(models.Invoice, { onDelete: "CASCADE" })
+    User.hasMany(models.Verification, { onDelete: "CASCADE" })
+  }
 
-  User.findByLogin = async login => {
-    let user = await User.findOne({
-      where: { email: login },
-    });
+  User.findByLogin = async (login) => {
+    const user = await User.findOne({ where: { email: login } })
 
-    return user;
-  };
+    return user
+  }
 
-  User.beforeCreate(async user => {
-    user.password = await user.generatePasswordHash();
-  });
+  User.beforeCreate(async (user) => {
+    user.password = await user.generatePasswordHash()
+  })
 
   User.prototype.generatePasswordHash = async function() {
-    const saltRounds = 10;
-    return await bcrypt.hash(this.password, saltRounds);
-  };
+    const saltRounds = 10
+    return await bcrypt.hash(this.password, saltRounds)
+  }
 
   User.prototype.validatePassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
-  };
+    return await bcrypt.compare(password, this.password)
+  }
 
-  return User;
-};
+  return User
+}
 
-export default user;
+export default user

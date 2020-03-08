@@ -1,16 +1,16 @@
 const invoice = (sequelize, DataTypes) => {
-  const Invoice = sequelize.define('invoice', {
+  const Invoice = sequelize.define("invoice", {
     text: {
       type: DataTypes.STRING,
       validate: { notEmpty: true },
     },
-  });
+  })
 
-  Invoice.associate = models => {
-    Invoice.belongsTo(models.User);
-  };
+  Invoice.associate = (models) => {
+    Invoice.belongsTo(models.User)
+  }
 
-  return Invoice;
-};
+  return Invoice
+}
 
-export default invoice;
+export default invoice

@@ -10,6 +10,7 @@ import {
   ApolloServer,
   AuthenticationError,
 } from 'apollo-server-express';
+import { AWSS3Uploader } from './helpers/awsUploader'
 
 import schema from './schema';
 import resolvers from './resolvers';
@@ -22,11 +23,13 @@ const AWS_SDK = require('aws-sdk');
 // Configure AWS
 AWS_SDK.config.update({
   accessKeyId: config.AWS_S3_ACCESS_KEY_ID,
-  secretAccessKey: config.AWS_S3_SECRET_ACCESS_KEY
+  secretAccessKey: config.AWS_S3_SECRET_ACCESS_KEY,
+  destinationBucketName: config.AWS_S3_BUCKET,
+  region: config.AWS_S3_REGION,
 });
 
 export const AWS = AWS_SDK
-export const AWS_S3 = new AWS.S3();
+export const S3 = new AWS.S3();
 
 app.use(cors());
 app.use(morgan('dev'));

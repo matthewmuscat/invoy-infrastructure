@@ -9,17 +9,17 @@ import ErrorMessage from "../Error/index.jsx"
 import styles from "./styles.module.scss"
 
 const INITIAL_STATE = {
-  first_name: "",
-  last_name: "",
-  phone_number: "",
+  first_name: "Matthew",
+  last_name: "Muscat",
+  phone_number: "2015550123",
   dob: {
-    day: "",
-    month: "",
-    year: "",
+    day: "23",
+    month: "10",
+    year: "1999",
   },
-  email: "",
-  password: "",
-  passwordConfirmation: "",
+  email: "officialmatthewmuscat@gmail.com",
+  password: "invoy12345",
+  passwordConfirmation: "invoy12345",
 }
 
 const SignUpPage = ({ history, refetch }) => (

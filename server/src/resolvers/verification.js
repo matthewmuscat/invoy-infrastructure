@@ -1,46 +1,124 @@
-import Sequelize from 'sequelize';
-import { combineResolvers } from 'graphql-resolvers';
-import { isAuthenticated } from './authorization';
-import { uploadFile } from '../helpers/aws';
-import { config } from '../config';
-import { AWS_S3 } from '../index.mjs';
-import fs from 'fs';
+import fs from "fs"
+import Sequelize from "sequelize"
+import { combineResolvers } from "graphql-resolvers"
+import { config } from "../config"
+import { S3 } from "../index.mjs"
+import { isAuthenticated } from "./authorization"
+import { formatFileUpload } from "../helpers/universal"
 
-// const index = require("../index");
-const {
-  AWS_S3_ACCESS_KEY_ID,
-  AWS_S3_BUCKET,
-  AWS_S3_SECRET_ACCESS_KEY,
-} = config;
-
-// createInvoice: combineResolvers(
-//   isAuthenticated,
-//   async (parent, { text }, { models, me }) => {
-//     const invoice = await models.Invoice.create({
-//       text,
-//       userId: me.id,
-//     });
-
-//     pubsub.publish(EVENTS.INVOICE.CREATED, {
-//       InvoiceCreated: { invoice },
-//     });
-
-//     return invoice;
-//   },
-// ),
+const stripe = require("stripe")(config.STRIPE_KEY)
 
 export default {
   Mutation: {
-    createVerification: combineResolvers(
+    singleUploadStream: combineResolvers(
       isAuthenticated,
       async (parent, { files }, { models, me }) => {
-        console.log('files', files);
+        const formattedFiles = await files
+        // const file = await realFiles[0]
+
+        // const fileToUpload = await stripe.files.create({
+        //   purpose: 'identity_document',
+        //   file: {
+        //     data: file,
+        //     name: file.filename,
+        //     type: 'image/png', // image/jpeg or image/png
+        //   }
+        // })
+
+        // console.log("ye", yeet)
+
+        if (formattedFiles.length !== 2) {
+          throw new UserInputError("You must upload both front and back verification documents.")
+        }
+
+        return Promise.all(
+          formattedFiles.map(async (file, i) => {
+            const { createReadStream } = await file // mimetype, filename
+            return createReadStream()
+          })
+        )
+        .then(async res => {
+          const frontFile = res[0]
+          const backFile = res[1]
+          const frontReadstream = Buffer.from([frontFile.fileStream])
+          const backReadstream = Buffer.from([backFile.fileStream])
+
+          return Promise.all([
+            stripe.files.create({
+              purpose: 'identity_document',
+              file: {
+                data: frontReadstream,
+                name: 'verification_front.png',
+                type: 'image/png', // image/jpeg or image/png
+              }
+            }, { 
+              stripeAccount: me.account
+            }),
+            stripe.files.create({
+              purpose: 'identity_document',
+              file: {
+                data: backReadstream,
+                name: 'verification_back.png',
+                type: 'image/png',
+              }
+            }, { 
+              stripeAccount: me.account
+            }),
+          ]).then(documents => {
+            console.log("res:", documents)
+            const accounts = stripe.accounts.update(me.account, {
+              verification: {
+                document: {
+                  front: documents[0].id,
+                  back: documents[1].id,
+                },
+              },
+            })
+
+            return [frontFile, backFile]
+          }).catch(err => console.log("BIG ERROR: ", err))
+        })
+        .then(async files => {
+          if(files.length > 1) {
+            const uploadedFiles = files.map(async (file, i) => {
+              const formattedKey = i === 0
+              ? formatFileUpload(me.id, "verification_front", "verification_front")
+              : formatFileUpload(me.id, "verification_back", "verification_back")
+  
+              // Stream to s3
+              const uploadParams = { Bucket: config.AWS_S3_BUCKET, Key: formattedKey, Body: file.fileStream }
+              return await S3.upload(uploadParams).promise()
+            })
+
+            const file_location_front = uploadedFiles[0].Location
+            const file_location_back = uploadedFiles[1].Location
+
+            return models.Verification.create({
+              file_location_front,
+              file_location_back,
+              userId: me.id,
+            })
+          } else {
+            throw new Error("There was an error posting to Stripe")
+          }
+        }).catch(err => console.log(err))
+      }
+    ),
+
+    createVerification: combineResolvers(
+      isAuthenticated,
+      async (parent, { file }, { models, me }) => {
+        const { stream, filename, mimetype, encoding } = await file
+
+        // Do work 💪
+
+        return { filename, mimetype, encoding, url: "" }
         // const stripe_account = me.account;
         // const front = files[0];
         // const back = files[1];
 
-        // let frontS3File;
-        // let backS3File;
+        // let frontS3File
+        // let backS3File
 
         // try {
         //   // handle stripe upload
@@ -102,33 +180,21 @@ export default {
         // // store file location in verification
 
         // // const fileLocation = s3_upload.link
-        // // const storeDocumentUrl = await models.Verification.create({
-        // //   fileLocation,
-        // //   userId: me.id,
-        // // });
 
-        const file_location_front = "skrt"
-        const file_location_back = "skrt"
+        // const file_location_front = "skrt"
+        // const file_location_back = "skrt"
 
-        console.log("before creation")
+        // const verification = await models.Verification.create({
+        //   file_location_front,
+        //   file_location_back,
+        //   userId: me.id,
+        // })
 
-        const verification = await models.Verification.create({
-          file_location_front,
-          file_location_back,
-          userId: me.id,
-        })
-
-        console.log("verificiation", verification)
-
-        return verification
+        // return verification
       }
     ),
 
   },
 
-  Verification: {
-    user: async (verification, args, { loaders }) => {
-      return await loaders.user.load(verification.userId);
-    },
-  },
-};
+  Verification: { user: async (verification, args, { loaders }) => await loaders.user.load(verification.userId) },
+}

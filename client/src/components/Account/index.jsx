@@ -1,95 +1,111 @@
 // @flow
-import React, { Component } from "react"
+import React, { Component, Fragment } from "react"
 import { Mutation } from "react-apollo"
 import withAuthorization from "../Session/withAuthorization"
-import { CREATE_VERIFICATION_MUTATION } from "../../graphql/mutations"
+import { CREATE_VERIFICATION_MUTATION, UPLOAD_FILE_STREAM } from "../../graphql/mutations"
 import ErrorMessage from "../Error/index.jsx"
 
 type State = {
+  attachedFiles: Array<File>,
   disabled: boolean,
-  files: Array<string>,
 }
 
 class AccountPage extends Component<{}, State> {
   constructor(props) {
     super(props)
     this.state = {
-      files: [],
+      attachedFiles: [],
       disabled: true,
     }
   }
 
-  handleChangeFile = (event) => {
-    const { files } = this.state 
-    const uploadedFile = event.target.files[0]
-    const formData = new FormData()
-    formData.append("file", uploadedFile)
-    const returnedFormData = formData.get("file")
-
-    if (returnedFormData != "undefined") {
-      this.setState({ files: [...files, returnedFormData] }, () => {
-        if (files.length === 1) {
+  onChangeHandler = ({ target: { files } }) => {
+    const { attachedFiles } = this.state
+    
+    const file = files[0]
+    if (files) {
+      this.setState({ attachedFiles: [...attachedFiles, file] }, () => {
+        if (this.state.attachedFiles.length === 2) {
           this.setState({ disabled: false })
         }
       })
     } else {
       this.setState({ disabled: true })
     }
-  
-    //Make a request to server and send formData
   }
 
   handleUpload = async (event, createVerification) => {
     event.preventDefault()
 
+    const { attachedFiles } = this.state
     try {
-      await createVerification()
+      attachedFiles && await createVerification()
     } catch (error) {
       console.log(error)
     }
   };
 
   render() {
-    const { disabled, files } = this.state
-    const formattedFiles = files.map(f => ({
-      name: f.name,
-      lastModified: f.lastModified,
-      lastModifiedDate: f.lastModifiedDate,
-      webkitRelativePath: f.webkitRelativePath,
-      size: f.size,
-      type: f.type,
-    }))
+    const { disabled, attachedFiles } = this.state
 
     return (
-      <Mutation
-        mutation={CREATE_VERIFICATION_MUTATION}
-        variables={{ files: formattedFiles }}
-      >
-        {(createVerification, { data, loading, error }) => (
-          <div>
-            <h1>Account Page</h1>
-        
+      <div>
+        <h1>Account Page</h1>
+
+        <Mutation
+          mutation={UPLOAD_FILE_STREAM}
+          variables={{ files: attachedFiles }}
+        >
+          {(createVerification, { data, loading, error }) => (
             <div>
-              <h2>Verification (required)</h2>
-              <p>Please upload a document showing your address, either a passport, driver's license, or utility-bill
+              <div>
+                <h2>Verification (required)</h2>
+                <p>Please upload a document showing your address, either a passport, driver's license, or utility-bill
                 from a well known company.
-              </p>
+                </p>
 
-              <form onSubmit={event => this.handleUpload(event, createVerification)}>
-                <input id={"front"} onChange={e => this.handleChangeFile(e)} type="file" /><br /><br />
+                <form encType={"multipart/form-data"} onSubmit={event => this.handleUpload(event, createVerification)}>
+                  <input id={"front"} name={"document"} onChange={this.onChangeHandler} type="file" /><br /><br />
+                  <input id={"back"} name={"document"} onChange={this.onChangeHandler} type="file" /><br /><br />
 
-                <input id={"back"} onChange={e => this.handleChangeFile(e)} type="file" /><br /><br />
+                  <button disabled={disabled} type="submit">Upload File</button>
 
+                  {error && <ErrorMessage error={error} />}
+                  {loading && <p>Loading...</p>}
+                </form>
+              </div>
 
-                <button disabled={disabled} type="submit">Upload File</button>
-
-                {error && <ErrorMessage error={error} />}
-              </form>
             </div>
+          )}
+        </Mutation>
 
-          </div>
-        )}
-      </Mutation>
+        
+        <Mutation
+          mutation={UPLOAD_FILE_STREAM}
+          variables={{ files: attachedFiles }}
+        >
+          {(createVerification, { data, loading, error }) => (
+            <div>
+              <div>
+                <h2>Bank Account (required)</h2>
+                <p>Please connect your bank account that you wish to send and receive funds from.
+                </p>
+
+                <form encType={"multipart/form-data"} onSubmit={event => this.handleUpload(event, createVerification)}>
+                  <input id={"front"} name={"document"} onChange={this.onChangeHandler} type="file" /><br /><br />
+                  <input id={"back"} name={"document"} onChange={this.onChangeHandler} type="file" /><br /><br />
+
+                  <button disabled={disabled} type="submit">Upload File</button>
+
+                  {error && <ErrorMessage error={error} />}
+                  {loading && <p>Loading...</p>}
+                </form>
+              </div>
+
+            </div>
+          )}
+        </Mutation>
+      </div>
     )
   }
 }

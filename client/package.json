@@ -19,6 +19,7 @@
     "apollo-link-error": "^1.1.1",
     "apollo-link-http": "^1.5.5",
     "apollo-link-ws": "^1.0.9",
+    "apollo-upload-client": "^12.1.0",
     "apollo-utilities": "^1.0.24",
     "babel-eslint": "^10.0.2",
     "babel-plugin-flow-react-proptypes": "^25.1.0",
