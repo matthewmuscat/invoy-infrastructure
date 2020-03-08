@@ -10,7 +10,6 @@ import {
   ApolloServer,
   AuthenticationError,
 } from 'apollo-server-express';
-import { AWSS3Uploader } from './helpers/awsUploader'
 
 import schema from './schema';
 import resolvers from './resolvers';
