@@ -82,8 +82,8 @@ export default {
             if(files.length > 1) {
               const uploadedFiles = files.map(async (file, i) => {
                 const formattedKey = i === 0
-                  ? formatFileUpload(me.id, "verification_front", "verification_front")
-                  : formatFileUpload(me.id, "verification_back", "verification_back")
+                  ? formatFileUpload({ id: me.id, type: "verification_front", filename: "verification_front" })
+                  : formatFileUpload({ id: me.id, type: "verification_back", filename: "verification_back" })
   
                 // Stream to s3
                 const uploadParams = { Bucket: process.env.AWS_S3_BUCKET, Key: formattedKey, Body: file.fileStream }
