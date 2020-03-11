@@ -1,8 +1,5 @@
-
-(type) PR Title
---------
-
 <!--
+PR title format: (type) PR title
 (type) should be one of the following:
 * feat (feature)
 * fix (bug fix)
@@ -14,18 +11,17 @@
 this should be familiar from the commit template!
 -->
 ### Context
-#### What is the PR about?
 
-#### What was the original problem?
+#### What was the problem?
 
 #### What was the solution?
 
 #### What assumptions did you make along the way?
 
+
 ### Notes for code reviewers
 
-Include any notes that will make it easier for code reviewers to be conducted on this PR
-
+Include any notes that will make it easier for code reviews to be conducted on this PR
 
 ### Notes for QA
 
