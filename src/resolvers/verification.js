@@ -30,7 +30,7 @@ export default {
         }
 
         return Promise.all(
-          formattedFiles.map(async (file, i) => {
+          formattedFiles.map(async (file) => {
             const { createReadStream } = await file // mimetype, filename
             return createReadStream()
           })

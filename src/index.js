@@ -105,7 +105,8 @@ const port = process.env.PORT || 8000
 const flag = true
 
 sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {
-  // TODO: define createUsersWithInvoices
+  // TODO: define createUsersWithInvoices properly
+  const createUsersWithInvoices = () => null
   if (isTest || isProduction) { createUsersWithInvoices(new Date()) }
 
   httpServer.listen({ port }, () => { console.log(`Apollo Server on http://localhost:${port}/graphql`) })
