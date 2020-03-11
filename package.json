@@ -2,12 +2,9 @@
   "name": "invoy-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "engines": {
-    "node": "10.11.0"
-  },
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/index.mjs",
+    "dev": "nodemon --exec babel-node src/index.js",
     "test:run-server": "TEST_DATABASE=invoy yarn dev",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "test": "echo \"No test specified\" && exit 0",

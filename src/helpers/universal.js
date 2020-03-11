@@ -1,5 +1,3 @@
-// @flow
+export const formatFileUpload = (id, type, filename) => `user_id=${id} type=${type} filename=${filename}`
 
-export const formatFileUpload = (id: string, type: string, filename: string): string => {
-  return `user_id=${id} type=${type} filename=${filename}`;
-}
+export default null

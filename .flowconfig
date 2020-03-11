@@ -1,7 +1,6 @@
 [ignore]
-.*/node_modules/graphql/.*
-.*/node_modules/graphql-tag/.*
-
+**/node_modules
+node_modules/
 
 [include]
 src/**/*.js

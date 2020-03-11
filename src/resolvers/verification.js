@@ -1,12 +1,10 @@
-import fs from "fs"
-import Sequelize from "sequelize"
 import { combineResolvers } from "graphql-resolvers"
-import { config } from "../config"
-import { S3 } from "../index.mjs"
-import { isAuthenticated } from "./authorization"
+import { UserInputError } from "apollo-server"
+import { S3 } from "../index"
 import { formatFileUpload } from "../helpers/universal"
+import { isAuthenticated } from "./authorization"
 
-const stripe = require("stripe")(config.STRIPE_KEY)
+const stripe = require("stripe")(process.env.STRIPE_KEY)
 
 export default {
   Mutation: {
@@ -37,77 +35,82 @@ export default {
             return createReadStream()
           })
         )
-        .then(async res => {
-          const frontFile = res[0]
-          const backFile = res[1]
-          const frontReadstream = Buffer.from([frontFile.fileStream])
-          const backReadstream = Buffer.from([backFile.fileStream])
+          .then(async (res) => {
+            const frontFile = res[0]
+            const backFile = res[1]
+            const frontReadstream = Buffer.from([frontFile.fileStream])
+            const backReadstream = Buffer.from([backFile.fileStream])
 
-          return Promise.all([
-            stripe.files.create({
-              purpose: 'identity_document',
-              file: {
-                data: frontReadstream,
-                name: 'verification_front.png',
-                type: 'image/png', // image/jpeg or image/png
-              }
-            }, { 
-              stripeAccount: me.account
-            }),
-            stripe.files.create({
-              purpose: 'identity_document',
-              file: {
-                data: backReadstream,
-                name: 'verification_back.png',
-                type: 'image/png',
-              }
-            }, { 
-              stripeAccount: me.account
-            }),
-          ]).then(documents => {
-            console.log("res:", documents)
-            const accounts = stripe.accounts.update(me.account, {
-              verification: {
-                document: {
-                  front: documents[0].id,
-                  back: documents[1].id,
+            return Promise.all([
+              stripe.files.create({
+                purpose: "identity_document",
+                file: {
+                  data: frontReadstream,
+                  name: "verification_front.png",
+                  type: "image/png", // image/jpeg or image/png
+                }
+              }, { 
+                stripeAccount: me.account
+              }),
+              stripe.files.create({
+                purpose: "identity_document",
+                file: {
+                  data: backReadstream,
+                  name: "verification_back.png",
+                  type: "image/png",
+                }
+              }, { 
+                stripeAccount: me.account
+              }),
+            ]).then((documents) => {
+              console.log("res:", documents)
+              // TODO: Use 'accounts' variable
+              // eslint-disable-next-line no-unused-vars
+              const accounts = stripe.accounts.update(me.account, { 
+                verification: {
+                  document: {
+                    front: documents[0].id,
+                    back: documents[1].id,
+                  },
                 },
-              },
-            })
+              })
 
-            return [frontFile, backFile]
-          }).catch(err => console.log("BIG ERROR: ", err))
-        })
-        .then(async files => {
-          if(files.length > 1) {
-            const uploadedFiles = files.map(async (file, i) => {
-              const formattedKey = i === 0
-              ? formatFileUpload(me.id, "verification_front", "verification_front")
-              : formatFileUpload(me.id, "verification_back", "verification_back")
+              return [frontFile, backFile]
+            }).catch(err => console.log("BIG ERROR: ", err))
+          })
+          .then(async (files) => {
+            if(files.length > 1) {
+              const uploadedFiles = files.map(async (file, i) => {
+                const formattedKey = i === 0
+                  ? formatFileUpload(me.id, "verification_front", "verification_front")
+                  : formatFileUpload(me.id, "verification_back", "verification_back")
   
-              // Stream to s3
-              const uploadParams = { Bucket: config.AWS_S3_BUCKET, Key: formattedKey, Body: file.fileStream }
-              return await S3.upload(uploadParams).promise()
-            })
+                // Stream to s3
+                const uploadParams = { Bucket: process.env.AWS_S3_BUCKET, Key: formattedKey, Body: file.fileStream }
+                return await S3.upload(uploadParams).promise()
+              })
 
-            const file_location_front = uploadedFiles[0].Location
-            const file_location_back = uploadedFiles[1].Location
+              const file_location_front = uploadedFiles[0].Location
+              const file_location_back = uploadedFiles[1].Location
 
-            return models.Verification.create({
-              file_location_front,
-              file_location_back,
-              userId: me.id,
-            })
-          } else {
-            throw new Error("There was an error posting to Stripe")
-          }
-        }).catch(err => console.log(err))
+              return models.Verification.create({
+                file_location_front,
+                file_location_back,
+                userId: me.id,
+              })
+            } else {
+              throw new Error("There was an error posting to Stripe")
+            }
+          }).catch(err => console.log(err))
       }
     ),
 
     createVerification: combineResolvers(
       isAuthenticated,
+      // TODO: Use 'models', 'me', 'stream' variables
+      // eslint-disable-next-line no-unused-vars
       async (parent, { file }, { models, me }) => {
+        // eslint-disable-next-line no-unused-vars
         const { stream, filename, mimetype, encoding } = await file
 
         // Do work 💪

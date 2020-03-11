@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken"
 import { combineResolvers } from "graphql-resolvers"
 import { AuthenticationError, UserInputError } from "apollo-server"
-import { config } from "../config"
 import { isAdmin, isAuthenticated } from "./authorization"
 
-const stripe = require("stripe")(config.STRIPE_KEY)
+const stripe = require("stripe")(process.env.STRIPE_KEY)
 
 const createToken = async (user, stripeId, secret, expiresIn) => {
   const { id, email, role } = user

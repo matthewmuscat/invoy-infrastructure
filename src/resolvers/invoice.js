@@ -12,9 +12,7 @@ const fromCursorHash = string =>
 export default {
   Query: {
     invoices: async (parent, { cursor, limit = 100 }, { models }) => {
-      const cursorOptions = cursor
-        ? { where: { createdAt: { [Sequelize.Op.lt]: fromCursorHash(cursor) } } }
-        : {}
+      const cursorOptions = cursor ? { where: { createdAt: { [Sequelize.Op.lt]: fromCursorHash(cursor) } } } : {}
 
       const invoices = await models.Invoice.findAll({
         order: [["createdAt", "DESC"]],
@@ -42,10 +40,7 @@ export default {
     createInvoice: combineResolvers(
       isAuthenticated,
       async (parent, { text }, { models, me }) => {
-        const invoice = await models.Invoice.create({
-          text,
-          userId: me.id,
-        })
+        const invoice = await models.Invoice.create({ text, userId: me.id })
 
         pubsub.publish(EVENTS.INVOICE.CREATED, { InvoiceCreated: { invoice } })
 
