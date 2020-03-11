@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/index.js",
+    "prod": "NODE_ENV=production babel-node -r dotenv/config src/index.js",
+    "dev": "nodemon --exec babel-node -r dotenv/config src/index.js",
     "test:run-server": "TEST_DATABASE=invoy yarn dev",
     "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "test": "echo \"No test specified\" && exit 0",

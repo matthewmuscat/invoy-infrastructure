@@ -14,8 +14,6 @@ import resolvers from "./resolvers"
 import models, { sequelize } from "./models"
 import loaders from "./loaders"
 
-require("dotenv").config()
-
 const app = express()
 const AWS_SDK = require("aws-sdk")
 
