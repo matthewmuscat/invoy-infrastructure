@@ -13,25 +13,6 @@
   "keywords": [],
   "author": "Matthew Muscat <officialmatthewmuscat@gmail.com>",
   "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.1.6",
-    "@babel/node": "^7.0.0",
-    "@babel/preset-env": "^7.1.6",
-    "@babel/preset-flow": "^7.8.3",
-    "@babel/register": "^7.0.0",
-    "axios": "^0.18.0",
-    "babel-eslint": "^10.0.3",
-    "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-compat": "^3.5.1",
-    "eslint-plugin-eslint-comments": "^3.1.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-underscore-to-lodash": "0.0.2",
-    "mocha": "^5.2.0",
-    "morgan": "^1.9.1",
-    "nodemon": "^1.18.7"
-  },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "apollo-server": "^2.2.3",
@@ -54,5 +35,33 @@
     "sequelize": "^4.41.2",
     "stripe": "^8.7.0",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-flow": "^7.8.3",
+    "@babel/register": "^7.0.0",
+    "axios": "^0.18.0",
+    "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-eslint-comments": "^3.1.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-underscore-to-lodash": "0.0.2",
+    "husky": "^3.0.0",
+    "mocha": "^5.2.0",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+      "**/*.js": "eslint --fix"
   }
 }
