@@ -1,0 +1,89 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 9
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src", "test"]
+      }
+    }
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "plugins": [
+    "import",
+    "eslint-comments"
+  ],
+  "rules": {
+    "template-curly-spacing" : "off",
+    "indent": ["error", 2],
+    "prefer-const": 2,
+    "arrow-body-style": 2,
+    "arrow-parens": [2, "as-needed", {
+      "requireForBlockBody": true
+    }],
+    "no-var": 2,
+    "no-undef": 2,
+    "curly": ["error", "all"],
+    "quotes": ["error", "double", {
+      "avoidEscape": true,
+      "allowTemplateLiterals": true
+    }],
+    "camelcase": "off",
+    "no-extend-native": ["error", {
+      "exceptions": ["Array", "String", "Date", "Number"]
+    }],
+    "no-multi-spaces": [2, {
+      "exceptions": {
+        "Property": true,
+        "VariableDeclarator": true,
+        "BinaryExpression": true,
+        "AssignmentExpression": true
+      },
+      "ignoreEOLComments": true
+    }],
+    "padded-blocks": [2, {
+      "blocks": "never",
+      "switches": "never"
+    }],
+    "semi": ["error", "never"],
+    "no-bitwise": 2,
+    "no-implicit-coercion": ["error", {
+      "boolean": false,
+      "number": false,
+      "string": true
+    }],
+    "import/no-unresolved": 2,
+    "import/named": 2,
+    "import/default": 2,
+    "import/namespace": 2,
+    "import/no-mutable-exports": 2,
+    "import/no-extraneous-dependencies": 2,
+    "import/export": 2,
+    "import/first": 2,
+    "import/order": [2, {
+      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+    }],
+    "import/no-duplicates": 2,
+    "import/extensions": 2,
+    "import/newline-after-import": 2,
+    "import/prefer-default-export": 2,
+    "eslint-comments/disable-enable-pair": 2,
+    "eslint-comments/no-duplicate-disable": 2,
+    "eslint-comments/no-unlimited-disable": 2,
+    "eslint-comments/no-unused-disable": 2,
+    "eslint-comments/no-unused-enable": 2
+  }
+}
