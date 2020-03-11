@@ -51,7 +51,7 @@
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-underscore-to-lodash": "0.0.2",
-    "husky": "^3.0.0",
+    "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
     "mocha": "^5.2.0",
     "morgan": "^1.9.1",
