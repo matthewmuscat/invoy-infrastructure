@@ -84,11 +84,11 @@ describe("users", () => {
     })
   })
 
-  describe("signUp, updateUser, deleteUser", () => {
-    it("signs up a user, updates a user and deletes the user as admin", async () => {
+  describe("createUser, updateUser, deleteUser", () => {
+    it("creates a user, updates a user and deletes the user as admin", async () => {
       // sign up
 
-      const { data: { data: { signUp: { token } } } } = await userApi.signUp({
+      const { data: { data: { createUser: { token } } } } = await userApi.createUser({
         email: "mark@gmule.com",
         password: "asdasdasd",
       })

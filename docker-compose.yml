@@ -1,10 +1,21 @@
 version: "3"
 services:
+  graphql:
+    build: ./
+    restart: always
+    volumes:
+    - "./:/app"
+    links:
+    - "database"
+    ports:
+    - "${GRAPHQL_PORT}:${GRAPHQL_PORT}"
+    depends_on:
+    - database
+    environment:
+      DATABASE_URL: "postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@database:5432/${DATABASE}"
   database:
     image: postgres
     restart: always
-    ports:
-    - "${DATABASE_PORT}:${DATABASE_PORT}"
     environment:
       POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
       POSTGRES_USER: "${DATABASE_USER}"

@@ -1,7 +1,7 @@
 import { PubSub } from "apollo-server"
 
-import * as INVOICE_EVENTS from "./invoice"
+import { CREATED } from "./invoice"
 
-export const EVENTS = { INVOICE: INVOICE_EVENTS }
+export const EVENTS = { INVOICE: { CREATED } }
 
 export default new PubSub()

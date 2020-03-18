@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import moment from "moment"
 import { combineResolvers } from "graphql-resolvers"
 import { AuthenticationError, UserInputError } from "apollo-server"
 import { isAdmin, isAuthenticated } from "./authorization"
@@ -25,11 +26,7 @@ export default {
   },
 
   Mutation: {
-    signUp: async (
-      parent,
-      { first_name, last_name, phone_number, dob, email, password },
-      { models, secret, connection }
-    ) => {
+    createUser: async (parent, { first_name, last_name, phone_number, dob, email, password }, { models, secret, connection }) => {
       const User = new Promise((resolve, reject) => {
         models.User.create({ first_name, last_name, phone_number, dob, email, password })
           .then((user) => {
@@ -45,9 +42,12 @@ export default {
       })
 
       const StripeUser = new Promise((resolve, reject) => {
-        const day = dob.getUTCDate() + 1
-        const month = dob.getUTCMonth()
-        const year = dob.getFullYear()
+        const momentDate = moment(dob, "YYYY-MM-DD")
+        const day = momentDate.get("date")
+        const month = momentDate.get("month")
+        const year = momentDate.get("year")
+
+        console.log({ day, month, year })
 
         stripe.accounts.create({
           type: "custom", business_type: "individual", country: "AU", email,
@@ -75,8 +75,11 @@ export default {
             "card_payments",
             "transfers",
           ],
-        }).then(account => resolve(account))
-          .catch(err => reject({ message: err.raw.message, rejectType: "stripe" }))
+        }).then((account) => {resolve(account)})
+          .catch((err) => {
+            console.log(err)
+            reject({ message: err.raw.message, rejectType: "stripe" })}
+          )
       })
 
       return Promise.all([ // these should only post if both work.
@@ -130,6 +133,7 @@ export default {
           console.log("Unknown rejectType", rejectType)
           break
         }
+        console.log({message, rejectType})
         throw new UserInputError(message) })
     },
 
