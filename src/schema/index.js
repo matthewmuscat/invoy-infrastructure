@@ -6,6 +6,7 @@ import verificationSchema from "./verification"
 
 const linkSchema = gql`
   scalar Date
+  scalar DateTime
   scalar BigInt
 
   type Query {

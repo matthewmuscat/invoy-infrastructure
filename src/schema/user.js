@@ -8,7 +8,7 @@ export default gql`
   }
 
   extend type Mutation {
-    signUp(
+    createUser(
       first_name: String!
       last_name: String!
       phone_number: String!

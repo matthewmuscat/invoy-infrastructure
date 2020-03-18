@@ -4,15 +4,12 @@ import morgan from "morgan"
 import jwt from "jsonwebtoken"
 import DataLoader from "dataloader"
 import express from "express"
-import {
-  ApolloServer,
-  AuthenticationError,
-} from "apollo-server-express"
-
+import { ApolloServer, AuthenticationError } from "apollo-server-express"
 import schema from "./schema"
 import resolvers from "./resolvers"
 import models, { sequelize } from "./models"
 import loaders from "./loaders"
+import { isTest, isProduction } from "./helpers/environment"
 
 const app = express()
 const AWS_SDK = require("aws-sdk")
@@ -63,14 +60,13 @@ const server = new ApolloServer({
     }
   },
   context: async ({ req, connection }) => {
+    const userLoader = new DataLoader(keys =>
+      loaders.user.batchUsers(keys, models),
+    )
     if (connection) {
       return {
         models,
-        loaders: {
-          user: new DataLoader(keys =>
-            loaders.user.batchUsers(keys, models),
-          ),
-        },
+        loaders: { user: userLoader },
       }
     }
 
@@ -82,11 +78,7 @@ const server = new ApolloServer({
         me,
         secret: process.env.SECRET,
         connection: req.connection,
-        loaders: {
-          user: new DataLoader(keys =>
-            loaders.user.batchUsers(keys, models),
-          ),
-        },
+        loaders: { user: userLoader },
       }
     }
   },
@@ -97,9 +89,7 @@ server.applyMiddleware({ app, path: "/graphql" })
 const httpServer = http.createServer(app)
 server.installSubscriptionHandlers(httpServer)
 
-const isTest = !!process.env.TEST_DATABASE
-const isProduction = !!process.env.DATABASE_URL
-const port = process.env.PORT || 8000
+const port = process.env.GRAPHQL_PORT || 4000
 const flag = true
 
 sequelize.sync({ force: isTest || isProduction || flag }).then(async () => {

@@ -59,14 +59,14 @@ export const users = async () =>
     `,
   })
 
-export const signUp = async variables =>
+export const createUser = async variables =>
   axios.post(API_URL, {
     query: `
       mutation(
         $email: String!,
         $password: String!
       ) {
-        signUp(
+        createUser(
           email: $email,
           password: $password
         ) {
