@@ -5,10 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "prod": "NODE_ENV=production babel-node -r dotenv/config src/index.js",
-    "start": "nodemon --exec babel-node -r dotenv/config src/index.js",
-    "test:run-server": "TEST_DATABASE=invoy yarn dev",
-    "test:execute-test": "mocha --require @babel/register 'src/**/*.spec.js'",
-    "test": "echo \"No test specified\" && exit 0",
+    "start": "NODE_ENV=development nodemon --exec babel-node -r dotenv/config src/index.js",
+    "test:run-server": "NODE_ENV=test TEST_DATABASE=invoy yarn start",
+    "test:execute-test": "NODE_ENV=test mocha --require @babel/register 'src/**/*.spec.js'",
+    "test": "NODE_ENV=test echo \"No test specified\" && exit 0",
     "lint": "eslint '**/*.{js,jsx}' --quiet --fix"
   },
   "keywords": [],
@@ -32,6 +32,7 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.2.2",
     "jsonwebtoken": "^8.4.0",
+    "mailgun-js": "^0.22.0",
     "moment": "^2.24.0",
     "multiparty": "^4.2.1",
     "pg": "^7.6.1",

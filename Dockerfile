@@ -10,4 +10,3 @@ RUN yarn install
 
 # Start Express application
 CMD ["yarn", "start"]
-

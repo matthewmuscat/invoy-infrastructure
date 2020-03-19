@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 import moment from "moment"
 import { combineResolvers } from "graphql-resolvers"
 import { AuthenticationError, UserInputError } from "apollo-server"
+import TransactionalEmail from "../helpers/transactionalEmail"
 import { isAdmin, isAuthenticated } from "./authorization"
 
 const stripe = require("stripe")(process.env.STRIPE_KEY)
@@ -44,10 +45,9 @@ export default {
       const StripeUser = new Promise((resolve, reject) => {
         const momentDate = moment(dob, "YYYY-MM-DD")
         const day = momentDate.get("date")
-        const month = momentDate.get("month")
+        // https://momentjs.com/docs/#/get-set/get/
+        const month = momentDate.get("month") + 1 // Moment only goes from 0 to 11 for get(unit = "month")
         const year = momentDate.get("year")
-
-        console.log({ day, month, year })
 
         stripe.accounts.create({
           type: "custom", business_type: "individual", country: "AU", email,
@@ -77,7 +77,6 @@ export default {
           ],
         }).then((account) => {resolve(account)})
           .catch((err) => {
-            console.log(err)
             reject({ message: err.raw.message, rejectType: "stripe" })}
           )
       })
@@ -101,6 +100,10 @@ export default {
           },
         }
         )
+
+        //  Send welcome email
+        const formattedEmail = `${first_name} ${last_name} <${email}>` 
+        TransactionalEmail.sendWelcomeEmail({ toEmail: formattedEmail, toFirstName: first_name })
 
         return { token: createToken(userToStore, stripeAccountId, secret, "60m") }
       }).catch(async ({ message, rejectType }) => {
